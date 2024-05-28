@@ -3,7 +3,7 @@
 	import Track from '$lib/components/Track.svelte';
 	import { Icon, Order } from '$lib/icons';
 
-	const { userStore, restaurantStore } = useUsersStore();
+	const { userStore, restaurantsStore } = useUsersStore();
 	let showTracker = false;
 	let fullName = `${$userStore.firstname.toCapitalize()} ${$userStore.lastname.toCapitalize()}`;
 
@@ -56,8 +56,8 @@
 
 	<div class="map-track sm:rounded-t-2xl rounded-none w-full container mx-auto mt-auto overflow-hidden relative">
 		{#if showTracker}
-			<Track fullName={fullName} restaurant={$restaurantStore[2].title} geoUser={{lat: parseFloat($userStore.latitude), lng: parseFloat($userStore.longitude)}}
-						 geoDeliveryman={{lat: parseFloat($restaurantStore[2].latitude), lng: parseFloat($restaurantStore[2].longitude)}}/>
+			<Track fullName={fullName} restaurant={$restaurantsStore[2].title} geoUser={{lat: parseFloat($userStore.latitude), lng: parseFloat($userStore.longitude)}}
+						 geoDeliveryman={{lat: parseFloat($restaurantsStore[2].latitude), lng: parseFloat($restaurantsStore[2].longitude)}}/>
 		{/if}
 	</div>
 </div>
