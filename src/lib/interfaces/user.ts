@@ -22,6 +22,8 @@ interface UserType {
 	email: string
 	phone: string
 	role: RoleEnum
+	latitude: string
+	longitude: string
 	created: Date | Timestamp
 	updated: Date | Timestamp
 }
@@ -47,8 +49,6 @@ export interface RestaurantType extends UserType {
 	note: number
 	slug: string
 	address: AddressType
-	latitude: string
-	longitude: string
 	menus?: MenuType[]
 	dishes?: DisheType[]
 	orders?: OrderType[]
@@ -56,10 +56,13 @@ export interface RestaurantType extends UserType {
 
 export interface DeliverymanType extends UserType {
 	firstname: string
-	latitude: string
-	longitude: string
 	status: StatusEnum,
 	orders?: OrderType[]
+}
+
+export interface PointsCustomerDeliverymanType {
+	lat: number
+	lng: number
 }
 
 export type UsersType = CustomerType & RestaurantType & DeliverymanType;

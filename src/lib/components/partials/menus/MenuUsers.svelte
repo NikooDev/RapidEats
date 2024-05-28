@@ -15,7 +15,7 @@
 	const isDeliveryman = user.role === RoleEnum.DELIVERYMAN;
 </script>
 
-<button class="flex items-center justify-between rounded-3xl p-2 w-10 md:ml-3 sm:ml-0 ml-0 md:w-auto h-10 {popupUserState ? 'text-white bg-pink-600 hover:bg-pink-600 hover:bg-opacity-100' : 'text-slate-800 hover:bg-slate-200 hover:bg-opacity-80' } transition-colors duration-200" use:popup={popupUser}>
+<button class="relative flex items-center justify-between rounded-3xl p-2 w-10 md:ml-3 sm:ml-0 ml-0 md:w-auto h-10 {popupUserState ? 'text-white bg-pink-600 hover:bg-pink-600 hover:bg-opacity-100' : 'text-slate-800 hover:bg-slate-200 hover:bg-opacity-80' } transition-colors duration-200" use:popup={popupUser}>
 	<span class="font-medium text-[1rem] mr-2 hidden md:inline-block pl-3 max-w-40 overflow-hidden text-ellipsis whitespace-nowrap">
 		{#if isCustomer || isDeliveryman}
 			{ user.firstname.toCapitalize() }
@@ -26,6 +26,11 @@
 	<Icon height={28} width={28}>
 		<User/>
 	</Icon>
+	{#if isCustomer}
+		<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5">
+			0
+		</span>
+	{/if}
 </button>
 <div class="absolute" data-popup="popupUser">
 	<div class="flex flex-col gap-2 bg-white rounded-lg w-72 shadow-center py-3 z-20">
@@ -70,24 +75,24 @@
 		</div>
 		{#if isCustomer}
 			<div class="flex">
-				<a href="/promotions" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
+				<button data-sveltekit-preload-data="tap" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
 					<Icon height={24} width={24}>
 						<Ticket/>
 					</Icon>
 					<span class="ml-3">Promotions</span>
-				</a>
+				</button>
 			</div>
 		{/if}
 		<div class="h-0.5 bg-slate-200 w-full my-0.5"/>
 		<div class="flex">
-			<a href="/help" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
+			<button data-sveltekit-preload-data="tap" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
 				<Icon height={24} width={24}>
 					<Help/>
 				</Icon>
 				<span class="ml-3">Aide</span>
-			</a>
+			</button>
 		</div>
-		<form class="flex w-full" method="POST" action="/api/auth?/logout" on:submit|preventDefault={(event) => logout(event, toast)}>
+		<form class="flex w-full" method="POST" data-sveltekit-preload-data="tap" action="/api/auth?/logout" on:submit|preventDefault={(event) => logout(event, toast)}>
 			<button type="submit" class="flex pl-[1.1rem] pr-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
 				<Icon height={24} width={24}>
 					<Signout/>

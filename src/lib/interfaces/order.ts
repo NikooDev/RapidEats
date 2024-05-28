@@ -8,17 +8,13 @@ enum OrderEnum {
 	DELIVERED = 'delivered'
 }
 
-interface OrdersInfosType {
+interface OrderType {
 	menus: MenuType[],
 	dishes: DisheType[],
-	restaurant: RestaurantType
-	deliveryman: DeliverymanType
+	restaurant?: RestaurantType
+	deliveryman?: DeliverymanType
 	status: OrderEnum
-}
-
-interface OrderType {
-	userUID: string
-	orders: OrdersInfosType[]
+	total: number
 }
 
 export default OrderType;

@@ -8,10 +8,10 @@ String.prototype.toCapitalize = function() {
 
 export const formatTitletoUrl = (title: string): string => {
 	// Fonction pour enlever les accents
-	const enleverAccents = (str: string): string => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+	const removeAccents = (str: string): string => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 	// Enlever les accents
-	let result = enleverAccents(title);
+	let result = removeAccents(title);
 
 	// Supprimer les caractères spéciaux
 	result = result.replace(/[^a-zA-Z0-9\s]/g, '');

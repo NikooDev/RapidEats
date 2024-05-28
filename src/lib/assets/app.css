@@ -22,6 +22,8 @@ input:-webkit-autofill:active{
 }
 
 html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	scrollbar-gutter: stable;
 }
 
@@ -83,8 +85,16 @@ body {
 	height: calc(100vh - 4rem);
 }
 
+.map-track {
+	box-shadow: -4px 2px 10px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
 .shadow-center {
 	box-shadow: 0 0 6px rgba(0, 0, 0, .3);
+}
+
+.animate-finish svg {
+	fill: #db2777;
 }
 
 .arrow-container {

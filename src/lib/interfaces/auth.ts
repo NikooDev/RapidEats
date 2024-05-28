@@ -10,3 +10,11 @@ export interface AuthUser {
 	isLogged: boolean
 	expired: boolean
 }
+
+export interface SuggestionsAddressType {
+	street: string,
+	postalCode: string,
+	city: string,
+	longitude: number,
+	latitude: number
+}

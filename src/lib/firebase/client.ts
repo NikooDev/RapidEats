@@ -51,7 +51,7 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 			searchMenuStore.set(menus);
 			searchDisheStore.set(dishes);
 		} catch (err) {
-			console.error('Error fetching documents: ', err);
+			console.error('Error fetching restaurants with searchbox: ', err);
 		}
 	} else {
 		loadingStore.set(false);

@@ -11,7 +11,8 @@ import Loading from '$lib/components/containers/Loading.svelte';
 import Map from '$lib/components/Map.svelte';
 import Notation from '$lib/components/Notation.svelte';
 import RestaurantCard from '$lib/components/app/RestaurantCard.svelte';
+import MenuCard from '$lib/components/app/MenuCard.svelte';
 
 export {
-	Header, Navigation, Cart, Modal, Signup, Login, Loading, Map, Notation, RestaurantCard
+	Header, Navigation, Cart, Modal, Signup, Login, Loading, Map, Notation, RestaurantCard, MenuCard
 }

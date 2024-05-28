@@ -2,12 +2,11 @@
 	import type { RestaurantType } from '$lib/interfaces/user';
 	import { Notation } from '$lib';
 	import { fade } from 'svelte/transition';
-	import { goto } from '$app/navigation';
 
 	export let data: RestaurantType;
 </script>
 
-<a href="/" on:click|preventDefault={() => goto('/'+data.slug)} in:fade={{ duration: 300 }} class="flex flex-col justify-center h-fit bg-white shadow-md rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-300">
+<a href="/{data.slug}" in:fade={{ duration: 300 }} class="flex flex-col justify-center h-fit bg-white shadow-md rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-300">
 	<div class="h-[12rem] w-full overflow-hidden">
 		<img src={data.coverURL} class="object-cover h-full w-full scale-[1] group-hover:scale-[1.1] transition-all duration-300" alt={data.title}/>
 	</div>

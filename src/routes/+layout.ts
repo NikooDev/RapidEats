@@ -1,5 +1,5 @@
 import initializeFirebase, { auth } from '$lib/firebase/app';
-import { setUser, setRestaurant, setDeliveryman, initializeSnapshot } from '$lib/stores/user';
+import { setUser, setRestaurants, setDeliverymans, initializeSnapshot } from '$lib/stores/user';
 import { initializeAuthListeners, setAuth } from '$lib/stores/auth';
 import { goto, invalidateAll } from '$app/navigation';
 import { expireSession } from '$lib/config/app';
@@ -57,8 +57,8 @@ export const load: LayoutLoad = ({ data }) => {
 			}
 
 			setUser(data.user);
-			setRestaurant(data.restaurants);
-			setDeliveryman(data.deliveryman);
+			setRestaurants(data.restaurants);
+			setDeliverymans(data.deliveryman);
 		}
 	}
 

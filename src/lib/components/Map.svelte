@@ -24,7 +24,7 @@
 
 	config.apiKey = 'BDnu8t7usofNcbcmeIBe';
 
-	onMount(() => {
+	onMount(async () => {
 		const initialState = { lng: -2.758239, lat: 47.657487, zoom: 11.5 };
 
 		map = new Map({
@@ -55,7 +55,7 @@
 				markerContent.classList.remove('popup-open');
 			});
 
-			new Marker({element: markerContent, color: 'rgb(219 39 119'}).setPopup(popup).setLngLat([longitude, latitude]).addTo(map);
+			new Marker({element: markerContent}).setPopup(popup).setLngLat([longitude, latitude]).addTo(map);
 
 			const container = popupContent.querySelector(`#note-${restaurant.uid}`);
 			if (container) {

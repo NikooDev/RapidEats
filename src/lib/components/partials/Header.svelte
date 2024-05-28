@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { Loading } from '$lib';
 	import { Icon, Hamburger, Poi, Map, Cart, Back } from '$lib/icons';
 	import { modalLogin, modalSignup } from '$lib/config/modal';
 	import { drawerLeft, drawerRight } from '$lib/config/drawer';
 	import { useSettingsStore } from '$lib/stores/app';
-	import { derived } from 'svelte/store';
+	import { derived, writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 	import { useAuthStore } from '$lib/stores/auth';
 	import { useUsersStore } from '$lib/stores/user';
 	import { onDestroy } from 'svelte';
-	import { invalidate } from '$app/navigation';
+	import { afterNavigate, beforeNavigate, invalidate, onNavigate } from '$app/navigation';
 	import Search from '$lib/components/Search.svelte';
 	import MenuUsers from '$lib/components/partials/menus/MenuUsers.svelte';
 	import { type DrawerStore, type ModalStore, type PopupSettings, type ToastStore } from '@skeletonlabs/skeleton';
@@ -21,9 +22,22 @@
 	const authStore = useAuthStore();
 	const { userStore } = useUsersStore();
 	const { settingsStore } = useSettingsStore();
+	const pageLoading = writable(false);
 
 	let showMaps = true;
 	let popupUserState = false;
+
+	onNavigate(() => {
+		pageLoading.set(true);
+	});
+
+	beforeNavigate(() => {
+		pageLoading.set(true);
+	});
+
+	afterNavigate(() => {
+		setTimeout(() => pageLoading.set(false), 500);
+	});
 
 	const popupUser: PopupSettings = {
 		event: 'click',
@@ -46,6 +60,7 @@
 
 	onDestroy(() => {
 		unsubscribeSettings();
+		pageLoading.set(false);
 	});
 </script>
 
@@ -56,9 +71,17 @@
 				<ul class="flex items-center mr-auto pr-5 shrink-0">
 					<li class="mr-5">
 						<a href="/" on:click|preventDefault={() => drawer.open({ ...drawerLeft })} class="flex items-center justify-center bg-pink-600 hover:bg-pink-700 transition-all duration-300 h-10 w-10 text-white rounded-full active:scale-[0.9]" role="button" aria-label="Menu">
-							<Icon viewBox={'0 0 512 512'} height={18} width={18}>
-								<Hamburger/>
-							</Icon>
+							{#if $pageLoading}
+								<div transition:fade={{duration: 300}} class="h-8 w-8 absolute flex justify-center items-center">
+									<Loading height={24} width={24} color="text-white" fill="fill-pink-600"/>
+								</div>
+							{:else}
+								<div transition:fade={{duration: 300}}>
+									<Icon viewBox={'0 0 512 512'} height={18} width={18}>
+										<Hamburger/>
+									</Icon>
+								</div>
+							{/if}
 						</a>
 					</li>
 					{#if $currentPath !== '/'}

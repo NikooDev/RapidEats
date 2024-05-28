@@ -14,7 +14,8 @@ import Help from '$lib/icons/Help.svelte';
 import UserCircle from '$lib/icons/UserCircle.svelte';
 import Meal from '$lib/icons/Meal.svelte';
 import Ticket from '$lib/icons/Ticket.svelte';
+import Home from '$lib/icons/Home.svelte';
 
 export {
-	Icon, Hamburger, Poi, Search, Map, Cart, Back, User, Stars, StarsOutline, Signout, Order, Help, UserCircle, Meal, Ticket
+	Icon, Hamburger, Poi, Search, Map, Cart, Back, User, Stars, StarsOutline, Signout, Order, Help, UserCircle, Meal, Ticket, Home
 }

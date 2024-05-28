@@ -2,8 +2,8 @@
 	import '$lib/assets/app.css';
 	import '$lib/helpers/serialize';
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
-	import { Cart, Header, Login, Navigation, Signup } from '$lib';
+	import { page, navigating } from '$app/stores';
+	import { Cart, Header, Login, MenuCard, Navigation, Signup } from '$lib';
 	import { fade } from 'svelte/transition';
 	import { onDestroy } from 'svelte';
 	import {
@@ -33,8 +33,23 @@
 	const unsubscribeModal = subscribeModal(modalStore);
 	const unsubscribeDrawer = subscribeDrawer(drawerStore);
 
+	const setNotifError = () => {
+		toastStore.clear();
+		toastStore.trigger({ ...toastError, message: 'Ce restaurant n\'existe pas', hideDismiss: true });
+	}
+
 	const isPageError = $page.error && $page.error.message.length > 0;
 	if (isPageError) document.title = 'Rapid Eats | Erreur';
+
+	const isRedirect = $page.url.searchParams.get('redirect');
+	if (isRedirect === 'notfound') setNotifError();
+
+	const unsubscribe = navigating.subscribe((route) => {
+		if (!route) return;
+
+		const isRedirect = route.to.url.searchParams.get('redirect');
+		if (isRedirect === 'notfound') setNotifError();
+	});
 
 	if (browser) {
 		authStore.subscribe((auth) => {
@@ -50,13 +65,15 @@
 	}
 
 	onDestroy(() => {
+		unsubscribe();
 		unsubscribeModal();
 		unsubscribeDrawer();
 	});
 
 	const modalRegistry: Record<string, ModalComponent> = {
 		modalLogin: { ref: Login, props: { toast: toastStore, modal: modalStore } },
-		modalSignup: { ref: Signup, props: { toast: toastStore, modal: modalStore } }
+		modalSignup: { ref: Signup, props: { toast: toastStore, modal: modalStore } },
+		modalMenu: { ref: MenuCard }
 	}
 </script>
 
@@ -65,7 +82,7 @@
 {/if}
 
 {#if isPageError}
-	<p>Error page {$page.error.message}</p>
+	<p>Error page {$page.error.message}</p> <!-- Créer un component Error page -->
 {:else}
 	<Toast rounded="rounded-lg" position="t" padding="py-3 px-5" zIndex="z-[1000]" buttonDismiss="text-[.9rem] hover:text-pink-600 text-slate-800 transition-colors duration-300" buttonDismissLabel="Fermer"/>
 
@@ -79,7 +96,7 @@
 		{/if}
 	</Drawer>
 
-	<main class="pt-16 z-0 relative">
+	<main class="pt-16 relative">
 		<slot/>
 	</main>
 

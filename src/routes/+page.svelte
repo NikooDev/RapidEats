@@ -4,10 +4,10 @@
 	import { Map, RestaurantCard } from '$lib';
 	import Masonry from 'svelte-bricks';
 
-	const { restaurantStore } = useUsersStore();
+	const { restaurantsStore } = useUsersStore();
 	const { settingsStore } = useSettingsStore();
 
-	$: restaurants = $restaurantStore;
+	$: restaurants = $restaurantsStore;
 </script>
 
 <svelte:head>
@@ -26,6 +26,6 @@
 		{/if}
 	</div>
 	{#if $settingsStore.maps}
-		<Map restaurants={$restaurantStore}/>
+		<Map restaurants={$restaurantsStore}/>
 	{/if}
 </div>

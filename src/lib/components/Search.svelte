@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { getSearchDatas, loadingStore, searchDisheStore, searchMenuStore, searchStore } from '$lib/firebase/client';
 	import { Icon, Hamburger, Search } from '$lib/icons';
-	import { Loading } from '$lib';
+	import { Loading, MenuCard } from '$lib';
 	import { clickOutside } from '$lib/helpers/outside';
 	import { fly } from 'svelte/transition';
 	import { onDestroy } from 'svelte';
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	import { modalMenu } from '$lib/config/modal';
 
 	export let classNames: string;
 
@@ -13,9 +15,17 @@
 
 	$: showSearch = false;
 
+	const modalStore = getModalStore();
+
 	const unsubscribeSearch = searchStore.subscribe((value) => {
 		showSearch = !!value;
 	});
+
+	const resetSearch = () => {
+		showSearch = false;
+		searchStore.set(null);
+		search = '';
+	}
 
 	onDestroy(() => {
 		showSearch = false;
@@ -51,7 +61,7 @@
 					{#if $searchStore.length > 0}
 						<p class="text-sm text-pink-600 font-bold px-2 pt-1 uppercase">Restaurants</p>
 						{#each $searchStore as restaurant}
-							<a href="/"
+							<a href="/{restaurant.slug}" data-sveltekit-preload-data="tap" on:click={resetSearch}
 								 class="flex items-center w-full h-20 hover:bg-slate-200 transition-colors duration-300 rounded-[12px] relative overflow-hidden">
 								{#if restaurant.coverURL}
 									<img src={restaurant.coverURL} class="object-cover rounded-[12px] w-20 h-20" alt={restaurant.title}/>
@@ -74,7 +84,7 @@
 						{#if $searchStore.length !== 0}<div class="bg-slate-200 h-0.5 w-full mt-2"/>{/if}
 						<p class="text-sm text-pink-600 font-bold px-2 pt-1 uppercase">Menus</p>
 						{#each $searchMenuStore as menu}
-							<a href="/"
+							<a href="/" on:click|preventDefault={() => modalStore.trigger({ ...modalMenu, component: { ref: MenuCard, props: { data: menu, type: 'modal' } } })}
 								 class="flex items-center w-full h-20 hover:bg-slate-200 transition-colors duration-300 rounded-[12px] relative overflow-hidden">
 								{#if menu.imageURL}
 									<img src={menu.imageURL} class="object-cover rounded-[12px] w-20 h-20" alt={menu.title}/>
@@ -87,7 +97,7 @@
 								{/if}
 								<div class="px-5 flex flex-col width-search">
 									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-lg font-bold">{ menu.title }</p>
-									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-sm font-semibold">{ menu.price }
+									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-sm font-semibold">{ menu.price.toFixed(2) }
 										€ • { menu.description }</p>
 								</div>
 							</a>

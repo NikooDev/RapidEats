@@ -1,5 +1,5 @@
 import { admindB } from '$lib/firebase/server/admin';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, where } from 'firebase/firestore';
 import { error } from '@sveltejs/kit';
 import { FirebaseError } from 'firebase-admin';
 import { DeliverymanType, RestaurantType, RoleEnum, UsersType } from '$lib/interfaces/user';
@@ -65,6 +65,28 @@ export const getRestaurants = async () => {
 
 	return {
 		restaurants
+	};
+}
+
+export const getRestaurant = async (slug: string) => {
+	let restaurantSnapshot: QuerySnap;
+
+	try {
+		restaurantSnapshot = await admindB
+			.collection('users')
+			.where('role', '==', 'restaurant')
+			.where('slug', '==', slug)
+			.get();
+	} catch (err) {
+		console.error(err);
+		const fbe = err as FirebaseError;
+		error(500, fbe.message);
+	}
+
+	const restaurants = snapToData<RestaurantType>(restaurantSnapshot);
+
+	return {
+		restaurant: restaurants[0]
 	};
 }
 

@@ -11,18 +11,28 @@ import type { DeliverymanType, RestaurantType, UsersType } from '$lib/interfaces
  */
 
 const userStore = writable<UsersType>();
-const restaurantStore = writable<RestaurantType[]>();
-const deliverymanStore = writable<DeliverymanType[]>();
+const restaurantsStore = writable<RestaurantType[]>();
+const restaurantStore = writable<RestaurantType>();
+const deliverymansStore = writable<DeliverymanType[]>();
+const deliverymanStore = writable<DeliverymanType>();
 
-export function setUser(data: UsersType) {
+export const setUser = (data: UsersType) => {
 	userStore.set(data);
 }
 
-export function setRestaurant(data: RestaurantType[]) {
+export const setRestaurants = (data: RestaurantType[]) => {
+	restaurantsStore.set(data);
+}
+
+export const setRestaurant = (data: RestaurantType) => {
 	restaurantStore.set(data);
 }
 
-export function setDeliveryman(data: DeliverymanType[]) {
+export const setDeliverymans = (data: DeliverymanType[]) => {
+	deliverymansStore.set(data);
+}
+
+export const setDeliveryman = (data: DeliverymanType) => {
 	deliverymanStore.set(data);
 }
 
@@ -48,7 +58,7 @@ export const initializeSnapshot = (userUID: string | null) => {
 	onSnapshot(queryRestaurant, (snapshot) => {
 		const restaurants = snapshot.docs.map(doc => ({ ...doc.data() as RestaurantType }));
 
-		restaurantStore.set(restaurants);
+		restaurantsStore.set(restaurants);
 	});
 
 	const queryDeliveryman = query(
@@ -56,14 +66,16 @@ export const initializeSnapshot = (userUID: string | null) => {
 	);
 	onSnapshot(queryDeliveryman, (snapshot) => {
 		const deliverymans = snapshot.docs.map(doc => ({ ...doc.data() as DeliverymanType }));
-		deliverymanStore.set(deliverymans);
+		deliverymansStore.set(deliverymans);
 	});
 }
 
 export const useUsersStore = () => {
 	return {
 		userStore,
+		restaurantsStore,
 		restaurantStore,
+		deliverymansStore,
 		deliverymanStore
 	};
 }

@@ -14,6 +14,12 @@ export const modalSignup: ModalSettings = {
 	backdropClasses: 'w-screen'
 };
 
+export const modalMenu: ModalSettings = {
+	type: 'component',
+	component: 'modalMenu',
+	backdropClasses: 'w-screen'
+};
+
 export const subscribeModal = (modalStore: ModalStore) => {
 	const { settingsStore } = useSettingsStore();
 

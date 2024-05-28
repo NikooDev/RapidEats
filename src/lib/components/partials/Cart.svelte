@@ -5,8 +5,6 @@
 	export let modal: ModalStore;
 </script>
 
-<aside>
-	<!--
-		Créer un bouton X pour fermer le drawer
-	-->
+<aside class="flex flex-col h-full">
+	<h2 class="text-center py-2 text-slate-800 font-medium text-[1.2rem]">Panier</h2>
 </aside>

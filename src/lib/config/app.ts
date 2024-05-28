@@ -4,9 +4,9 @@ import { SettingsType } from '$lib/interfaces/app';
  * @description Tableau des routes protégées
  */
 export const protectedRoutes = [
-	'/app/account',
-	'/app/orders',
-	'/app/track'
+	'/account',
+	'/orders',
+	'/track'
 ];
 
 /**
