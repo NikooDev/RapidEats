@@ -35,5 +35,7 @@ export const onDeliveryman = onDocumentCreated('orders/{docId}',
 
 	logger.info(restaurants.docs.map((doc) => doc.data()))
 
-	logger.log('Lorsqu\'une commande est créée, le livreur associé à la commande change de status');
+		/**
+		 * A FAIRE : Lorsqu'une commande est créée, le livreur associé à la commande change de status
+		 */
 });
