@@ -9,7 +9,7 @@
 
 	/**
 	 * Attribuer un livreur à la commande
-	 * Modifier le status du livreur et de la commande "En attente"
+	 * Modifier le status du livreur (en livraison) et de la commande "En attente"
 	 * Attendre 10 secondes avant l'envoie du livreur (notification pour informer les clients)
 	 *
 	 * Modifier le status de la commande "En livraison"

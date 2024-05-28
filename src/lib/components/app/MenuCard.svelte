@@ -3,20 +3,16 @@
 	import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { modalMenu } from '$lib/config/modal';
 	import { MenuCard } from '$lib';
-	import { writable } from 'svelte/store';
+	import { cart } from '$lib/stores/order';
 
 	export let data: MenuType;
 	export let type: string;
 	const modalStore = getModalStore();
 
-	const cart = writable<number>(0);
-
 	$: cartStorage = localStorage.getItem('cart') ? Object.values(JSON.parse(localStorage.getItem('cart'))) as MenuType[] & { quantity: number } : {} as MenuType[] & { quantity: number };
 
 	const addMenu = () => {
 		let cartExist = JSON.parse(localStorage.getItem('cart')) || {};
-
-		cart.update(c => c + 1);
 
 		if (cartExist[data.uid]) {
 			cartExist[data.uid].quantity += 1;
@@ -27,13 +23,12 @@
 			};
 		}
 
+
 		localStorage.setItem('cart', JSON.stringify(cartExist));
 	};
 
 	const removeMenu = () => {
 		let cartExist = JSON.parse(localStorage.getItem('cart')) || {};
-
-		cart.update(c => Math.max(c - 1, 0));
 
 		if (cartExist[data.uid]) {
 			if (cartExist[data.uid].quantity > 1) {
