@@ -12,7 +12,7 @@ import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
 
-setGlobalOptions({ region: 'europe-west1' });
+setGlobalOptions({region: 'europe-west1'});
 
 admin.initializeApp({
 	credential: admin.credential.cert({
@@ -24,18 +24,17 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-export const onDeliveryman = onDocumentCreated('orders/{docId}',
-	async (event) => {
-	event.params.docId // uid du document
+export const onDeliveryman = onDocumentCreated('orders/{docId}', async (event) => {
+	event.params.docId; // uid du document
 
 	const restaurants = await db
 		.collection('users').orderBy('created', 'asc')
 		.where('role', '==', 'restaurant')
 		.get();
 
-	logger.info(restaurants.docs.map((doc) => doc.data()))
+	logger.info(restaurants.docs.map((doc) => doc.data()));
 
-		/**
-		 * A FAIRE : Lorsqu'une commande est créée, le livreur associé à la commande change de status
-		 */
+	/**
+	 * A FAIRE : Lorsqu'une commande est créée, le livreur associé à la commande change de status
+	 */
 });
