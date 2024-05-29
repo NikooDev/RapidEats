@@ -84,7 +84,7 @@
 						{#if $searchStore.length !== 0}<div class="bg-slate-200 h-0.5 w-full mt-2"/>{/if}
 						<p class="text-sm text-pink-600 font-bold px-2 pt-1 uppercase">Menus</p>
 						{#each $searchMenuStore as menu}
-							<a href="/" on:click|preventDefault={() => modalStore.trigger({ ...modalMenu, component: { ref: MenuCard, props: { data: menu, type: 'modal' } } })}
+							<a href="/" on:click|preventDefault={() => modalStore.trigger({ ...modalMenu, component: { ref: MenuCard, props: { data: menu, type: 'modal', restaurantUID: menu.restaurantUID, restaurantTitle: menu.restaurantTitle } } })}
 								 class="flex items-center w-full h-20 hover:bg-slate-200 transition-colors duration-300 rounded-[12px] relative overflow-hidden">
 								{#if menu.imageURL}
 									<img src={menu.imageURL} class="object-cover rounded-[12px] w-20 h-20" alt={menu.title}/>

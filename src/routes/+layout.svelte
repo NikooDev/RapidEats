@@ -92,7 +92,7 @@
 		{#if $drawerStore.id === 'navigation'}
 			<Navigation drawer={drawerStore} modal={modalStore}/>
 		{:else if $drawerStore.id === 'cart'}
-			<Cart drawer={drawerStore} modal={modalStore}/>
+			<Cart/>
 		{/if}
 	</Drawer>
 

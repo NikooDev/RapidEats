@@ -6,7 +6,7 @@ const drawer = {
 	rounded: 'rounded-2xl',
 	shadow: 'shadow-md',
 	duration: 300,
-	regionDrawer: 'py-4 px-4'
+	regionDrawer: 'px-4'
 };
 
 export const drawerLeft: DrawerSettings = {

@@ -14,6 +14,7 @@
 	import Search from '$lib/components/Search.svelte';
 	import MenuUsers from '$lib/components/partials/menus/MenuUsers.svelte';
 	import { type DrawerStore, type ModalStore, type PopupSettings, type ToastStore } from '@skeletonlabs/skeleton';
+	import { totalCart } from '$lib/stores/order';
 
 	export let drawer: DrawerStore;
 	export let modal: ModalStore;
@@ -121,7 +122,7 @@
 									<Cart/>
 								</Icon>
 								<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5">
-									0
+									{ $totalCart }
 								</span>
 							</button>
 						</div>

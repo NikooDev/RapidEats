@@ -6,7 +6,7 @@ import type MenuType from '$lib/interfaces/menu';
 import type DisheType from '$lib/interfaces/dishe';
 
 export let searchStore = writable<RestaurantType[]>();
-export let searchMenuStore = writable<MenuType[]>();
+export let searchMenuStore = writable<MenuType[] & { restaurantUID?: string, restaurantTitle?: string }>();
 export let searchDisheStore = writable<DisheType[]>();
 export let loadingStore = writable<boolean>(false);
 
@@ -33,17 +33,24 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 			const snapshot = await getDocs(q);
 			const restaurants = snapshot.docs
 				.filter(doc => doc.data().title.toLowerCase().includes(value.toLowerCase()))
-				.map(doc => ({ ...doc.data() as RestaurantType }));
+				.map(doc => ({...doc.data() as RestaurantType}));
 
-			const menus = snapshot.docs
-				.flatMap(doc => doc.data().menus)
-				.filter(menu => menu.title.toLowerCase().includes(value.toLowerCase()))
-				.map(menu => ({ ...menu as MenuType }));
+			const menus = snapshot.docs.flatMap(doc => {
+				const restaurantData = doc.data();
+				const restaurantUID = doc.id;
+				const restaurantTitle = restaurantData.title; // Assurez-vous que vous avez la bonne clé pour le titre du restaurant
+
+				return restaurantData.menus.map((menu: MenuType) => ({
+					...menu,
+					restaurantUID,
+					restaurantTitle
+				}));
+			}).filter(menu => menu.title.toLowerCase().includes(value.toLowerCase())).map(menu => ({...menu as MenuType}));
 
 			const dishes = snapshot.docs
 				.flatMap(doc => doc.data().dishes)
 				.filter(dishe => dishe.title.toLowerCase().includes(value.toLowerCase()))
-				.map(dishe => ({ ...dishe as DisheType }));
+				.map(dishe => ({...dishe as DisheType}));
 
 			setTimeout(() => loadingStore.set(false), 500);
 
@@ -59,4 +66,4 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 		searchMenuStore.set(null);
 		searchDisheStore.set(null);
 	}
-}
+};

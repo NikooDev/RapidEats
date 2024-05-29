@@ -87,7 +87,7 @@
 			<h2 class="text-slate-800 font-bold text-2xl mb-3" id="menus">Menus</h2>
 			{#if restaurant.menus.length > 0}
 				<Masonry idKey="uid" items={restaurant.menus} minColWidth={300} gap={20} animate={false} let:item>
-					<MenuCard data={item} type="null"/>
+					<MenuCard data={item} restaurantUID={$restaurantStore.uid} restaurantTitle={$restaurantStore.title} type="null"/>
 				</Masonry>
 			{/if}
 		</div>

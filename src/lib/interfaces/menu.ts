@@ -1,6 +1,7 @@
 interface MenuType {
 	uid: string
-	restaurantUID: string
+	restaurantUID?: string
+	restaurantTitle?: string
 	title: string
 	description: string
 	price: number
