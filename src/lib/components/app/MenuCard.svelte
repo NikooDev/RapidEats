@@ -74,7 +74,7 @@
 					</span>
 				</div>
 			</div>
-			<div class="px-4 py-3">
+			<div class="px-4 py-3 w-full">
 				<p class="text-slate-800 font-bold text-lg mb-3 transition-colors duration-300 group-hover:text-pink-600">{ data.title }</p>
 				<p class="text-slate-800 text-base font-medium">{ data.description }</p>
 				<div class="flex gap-2 items-center justify-end mt-3 mb-1">

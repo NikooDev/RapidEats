@@ -56,7 +56,7 @@
 				 class="flex absolute top-[3.6rem] bg-white shadow-center rounded-lg w-full left-1/2 -translate-x-[12rem] min-w-[24rem] overflow-y-auto max-h-72">
 			<div class="py-2 px-2 flex flex-col gap-2 rounded-2xl overflow-hidden w-full h-full">
 				{#if $searchStore.length === 0 && $searchMenuStore.length === 0}
-					<p class="text-slate-800 text-center font-semibold text-base w-full pt-3 pb-4">Aucun résultat</p>
+					<p class="text-slate-800 text-center font-semibold text-base w-full pt-3 pb-3">Aucun résultat</p>
 				{:else}
 					{#if $searchStore.length > 0}
 						<p class="text-sm text-pink-600 font-bold px-2 pt-1 uppercase">Restaurants</p>
