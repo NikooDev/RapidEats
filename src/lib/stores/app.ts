@@ -23,6 +23,8 @@ export const useSettingsStore = () => {
 	}
 }
 
+export const pageLoading = writable(false);
+
 export const fromLocalStorage = (storageKey: string, fallbackValue: any) => {
 	if (browser) {
 		const storedValue = window.localStorage.getItem(storageKey)

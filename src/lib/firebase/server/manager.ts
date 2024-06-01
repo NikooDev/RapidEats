@@ -1,5 +1,5 @@
 import { admindB } from '$lib/firebase/server/admin';
-import { Timestamp, where } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { error } from '@sveltejs/kit';
 import { FirebaseError } from 'firebase-admin';
 import { DeliverymanType, RestaurantType, RoleEnum, UsersType } from '$lib/interfaces/user';

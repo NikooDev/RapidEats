@@ -86,7 +86,7 @@
 		{/if}
 		<h1 class="text-center font-bold text-[1.3rem] text-slate-800 mx-auto">{recoverPassword ? 'Mot de passe oublié ?' : 'Se connecter'}</h1>
 	</div>
-	<form method="post" action={!recoverPassword ? '/api/auth?/login' : '/api/auth?/recover'} on:submit|preventDefault={handleSubmit} class="mt-5 w-full px-5 py-5 overflow-clip max-h-full transition-all duration-300 {recoverPassword ? 'h-[12.5rem]' : 'h-[23rem]'}">
+	<form method="post" action={!recoverPassword ? '/api/auth?/login' : '/api/auth?/recover'} on:submit|preventDefault={handleSubmit} class="mt-5 w-full px-5 py-5 overflow-clip max-h-full transition-all duration-300 {recoverPassword ? 'h-[12.5rem]' : 'h-[23.4rem]'}">
 		{#if recoverPassword}
 			<div in:fade out:slide>
 				<div class="w-full mb-7">

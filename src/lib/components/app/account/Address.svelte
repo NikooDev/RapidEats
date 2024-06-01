@@ -5,17 +5,25 @@
 	import { clickOutside } from '$lib/helpers/outside';
 	import type { UsersType } from '$lib/interfaces/user';
 	import type{ SuggestionsAddressType } from '$lib/interfaces/auth';
+	import { setProfile } from '$lib/firebase/client';
+	import { invalidate } from '$app/navigation';
+	import { toastSuccess } from '$lib/config/toast';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	export let users: UsersType;
 
 	const fieldsEnabled = writable(false);
 	const addressSuggestions = writable<SuggestionsAddressType[]>([]);
 
+	const toast = getToastStore();
+
 	let numberStreet: string = '';
 	let street: string = '';
 	let postalCode: string = '';
 	let city: string = '';
 	let streetRef: HTMLInputElement;
+	let latitude: string = '';
+	let longitude: string = '';
 
 	$: visible = false;
 	$: emptySuggestion = false;
@@ -63,9 +71,26 @@
 		street = suggestion.street.replace(/^\d+\s*/, '');
 		postalCode = suggestion.postalCode;
 		city = suggestion.city;
+		latitude = suggestion.latitude;
+		longitude = suggestion.longitude;
 
 		visible = true;
 		emptySuggestion = false;
+	}
+
+	const handleSubmit = async () => {
+		const address = {
+			street: `${numberStreet} ${street}`,
+			postalCode,
+			city
+		}
+
+		await setProfile({ uid: users.uid, address, latitude, longitude });
+		await invalidate('/account');
+		visible = false;
+		emptySuggestion = false;
+		fieldsEnabled.set(false);
+		toast.trigger({ ...toastSuccess, message: 'Votre adresse a bien été modifiée', hideDismiss: true });
 	}
 </script>
 
@@ -90,7 +115,7 @@
 			<p>{ users.address.city }</p>
 		</div>
 	{:else}
-	<form method="post" class="w-full mt-5 relative" autocomplete="off">
+	<form method="post" on:submit|preventDefault={handleSubmit} class="w-full mt-5 relative" autocomplete="off">
 		<div class="flex gap-5 w-full {visible ? 'mb-5' : 'mb-2'}">
 			<label for="number" class="flex flex-col w-36 cursor-pointer">
 				<span class="flex justify-between group">

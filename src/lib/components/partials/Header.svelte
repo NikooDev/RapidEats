@@ -5,16 +5,17 @@
 	import { modalLogin, modalSignup } from '$lib/config/modal';
 	import { drawerLeft, drawerRight } from '$lib/config/drawer';
 	import { useSettingsStore } from '$lib/stores/app';
-	import { derived, writable } from 'svelte/store';
+	import { derived } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 	import { useAuthStore } from '$lib/stores/auth';
 	import { useUsersStore } from '$lib/stores/user';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { afterNavigate, beforeNavigate, invalidate, onNavigate } from '$app/navigation';
 	import Search from '$lib/components/Search.svelte';
 	import MenuUsers from '$lib/components/partials/menus/MenuUsers.svelte';
 	import { type DrawerStore, type ModalStore, type PopupSettings, type ToastStore } from '@skeletonlabs/skeleton';
 	import { totalCart } from '$lib/stores/order';
+	import { pageLoading } from '$lib/stores/app';
 
 	export let drawer: DrawerStore;
 	export let modal: ModalStore;
@@ -23,7 +24,7 @@
 	const authStore = useAuthStore();
 	const { userStore } = useUsersStore();
 	const { settingsStore } = useSettingsStore();
-	const pageLoading = writable(false);
+
 
 	let showMaps = true;
 	let popupUserState = false;
@@ -39,6 +40,10 @@
 	afterNavigate(() => {
 		setTimeout(() => pageLoading.set(false), 500);
 	});
+
+	onMount(() => {
+		pageLoading.set(false);
+	})
 
 	const popupUser: PopupSettings = {
 		event: 'click',

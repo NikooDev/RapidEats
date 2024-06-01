@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getSearchDatas, loadingStore, searchDisheStore, searchMenuStore, searchStore } from '$lib/firebase/client';
+	import { getSearchDatas, loadingStore, searchMenuStore, searchStore } from '$lib/firebase/client';
 	import { Icon, Hamburger, Search } from '$lib/icons';
 	import { Loading, MenuCard } from '$lib';
 	import { clickOutside } from '$lib/helpers/outside';
@@ -55,7 +55,7 @@
 		<div in:fly={{duration: 200}} out:fly={{duration: 200}}
 				 class="flex absolute top-[3.6rem] bg-white shadow-center rounded-lg w-full left-1/2 -translate-x-[12rem] min-w-[24rem] overflow-y-auto max-h-72">
 			<div class="py-2 px-2 flex flex-col gap-2 rounded-2xl overflow-hidden w-full h-full">
-				{#if $searchStore.length === 0 && $searchMenuStore.length === 0 && $searchDisheStore.length === 0}
+				{#if $searchStore.length === 0 && $searchMenuStore.length === 0}
 					<p class="text-slate-800 text-center font-semibold text-base w-full pt-3 pb-4">Aucun résultat</p>
 				{:else}
 					{#if $searchStore.length > 0}
@@ -99,28 +99,6 @@
 									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-lg font-bold">{ menu.title }</p>
 									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-sm font-semibold">{ menu.price.toFixed(2) }
 										€ • { menu.description }</p>
-								</div>
-							</a>
-						{/each}
-					{/if}
-					{#if $searchDisheStore.length > 0}
-						{#if $searchStore.length !== 0 && $searchMenuStore.length !== 0}<div class="bg-slate-200 h-0.5 w-full mt-2"/>{/if}
-						<p class="text-sm text-pink-600 font-bold px-2 pt-2 uppercase">Plats</p>
-						{#each $searchDisheStore as dishe}
-							<a href="/"
-								 class="flex items-center w-full h-20 hover:bg-slate-200 transition-colors duration-300 rounded-[12px] relative overflow-hidden">
-								{#if !dishe.imageURL}
-									<img src={dishe.imageURL} class="object-cover rounded-[12px] w-20 h-20" alt={dishe.title}/>
-								{:else}
-									<div class="w-20 h-20 rounded-[12px] bg-white flex justify-center items-center text-pink-600">
-										<Icon viewBox="0 0 512 512">
-											<Hamburger/>
-										</Icon>
-									</div>
-								{/if}
-								<div class="px-5 flex flex-col width-search">
-									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-lg font-bold">{ dishe.title }</p>
-									<p class="text-ellipsis overflow-hidden whitespace-nowrap text-slate-800 text-sm font-semibold">{ dishe.description }</p>
 								</div>
 							</a>
 						{/each}

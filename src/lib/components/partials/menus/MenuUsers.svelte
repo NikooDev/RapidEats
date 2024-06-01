@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { logout } from '$lib/actions/auth';
+	import type { PopupSettings, ToastStore } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
 	import { Help, Icon, Order, Signout, Ticket, User, UserCircle } from '$lib/icons';
 	import { RoleEnum, type UsersType } from '$lib/interfaces/user';
-	import type { PopupSettings, ToastStore } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+	import { getOrder } from '$lib/firebase/client';
+	import { OrderEnum } from '$lib/interfaces/order';
+	import { ordersCount } from '$lib/stores/order';
+	import { Loading } from '$lib';
 
 	export let user: UsersType;
 	export let popupUserState: boolean;
@@ -13,6 +18,19 @@
 	const isCustomer = user.role === RoleEnum.CUSTOMER;
 	const isRestaurant = user.role === RoleEnum.RESTAURANT;
 	const isDeliveryman = user.role === RoleEnum.DELIVERYMAN;
+
+	$: loading = true;
+
+	onMount(async () => {
+		const orders = await Promise.all(user.orders.map(async refOrder => {
+			return await getOrder(user.uid, refOrder);
+		}));
+
+		const count = orders.filter((el) => el.status === OrderEnum.PENDING || el.status === OrderEnum.IN_DELIVERY).length;
+
+		ordersCount.set(count);
+		loading = false;
+	});
 </script>
 
 <button class="relative flex items-center justify-between rounded-3xl p-2 w-10 md:ml-3 sm:ml-0 ml-0 md:w-auto h-10 {popupUserState ? 'text-white bg-pink-600 hover:bg-pink-600 hover:bg-opacity-100' : 'text-slate-800 hover:bg-slate-200 hover:bg-opacity-80' } transition-colors duration-200" use:popup={popupUser}>
@@ -26,9 +44,13 @@
 	<Icon height={28} width={28}>
 		<User/>
 	</Icon>
-	{#if isCustomer}
+	{#if isCustomer && !loading}
 		<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5">
-			0
+			{ $ordersCount }
+		</span>
+	{:else}
+		<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5 flex justify-center items-center">
+			<Loading height={13} width={13}/>
 		</span>
 	{/if}
 </button>
@@ -66,11 +88,16 @@
 			</a>
 		</div>
 		<div class="flex">
-			<a href="/orders" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
+			<a href="/orders" class="flex px-4 py-2 group font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
 				<Icon height={24} width={24}>
 					<Order/>
 				</Icon>
-				<span class="ml-3">Mes commandes</span>
+				<div class="flex items-center justify-between w-full">
+					<span class="ml-3">Mes commandes</span>
+					{#if isCustomer && !loading}
+						<span class="text-pink-600 text-lg font-semibold group-hover:text-white transition-colors duration-200">{ $ordersCount }</span>
+					{/if}
+				</div>
 			</a>
 		</div>
 		{#if isCustomer}

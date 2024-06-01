@@ -4,8 +4,15 @@
 	import Edit from '$lib/icons/Edit.svelte';
 	import { writable } from 'svelte/store';
 	import { fly, slide } from 'svelte/transition';
+	import { setProfile } from '$lib/firebase/client';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { toastError, toastSuccess } from '$lib/config/toast';
+	import { invalidate } from '$app/navigation';
+	import { auth } from '$lib/firebase/app';
+	import { updateEmail } from 'firebase/auth';
 
 	export let users: UsersType;
+
 	const usersStore = writable<UsersType>({ ...users });
 	const fieldsEnabled = writable({
 		firstname: true,
@@ -14,6 +21,8 @@
 		phone: true
 	});
 	const initialValues = writable<UsersType>({ ...users });
+	const toast = getToastStore();
+
 	$: isFieldEmpty = false;
 	$: isSameAsInitial = true;
 
@@ -66,6 +75,84 @@
 			return updatedUsers;
 		});
 	}
+
+	const handleSubmit = async () => {
+		toast.clear();
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+
+		const profile = {
+			firstname: $usersStore.firstname,
+			lastname: $usersStore.lastname,
+			email: $usersStore.email,
+			phone: $usersStore.phone
+		} as Partial<UsersType>
+
+		if (profile.firstname != $initialValues.firstname) {
+			if (profile.firstname.trim() === '') {
+				toast.trigger({ ...toastError, message: 'Votre prénom est requis', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, firstname: false });
+				return false;
+			}
+
+			await setProfile({ uid: $usersStore.uid, firstname: profile.firstname });
+		}
+
+		if (profile.lastname != $initialValues.lastname) {
+			if (profile.lastname.trim() === '') {
+				toast.trigger({ ...toastError, message: 'Votre nom est requis', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, lastname: false });
+				return false;
+			}
+
+			await setProfile({ uid: $usersStore.uid, lastname: profile.lastname });
+		}
+
+		if (profile.email != $initialValues.email) {
+			if (profile.email.trim() === '') {
+				toast.trigger({ ...toastError, message: 'Votre adresse e-mail est requise', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, email: false });
+				return false;
+			}
+			if (!emailRegex.test(profile.email)) {
+				toast.trigger({ ...toastError, message: 'Votre adresse e-mail est invalide', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, email: false });
+				return false;
+			}
+
+			await updateEmail(auth.currentUser, profile.email).then(async () => {
+				await setProfile({ uid: $usersStore.uid, email: profile.email });
+			}).catch(async (err) => {
+				if (err.code === 'auth/requires-recent-login') {
+					toast.trigger({ ...toastError, message: 'Vous devez avoir une connexion récente pour pouvoir modifier votre adresse e-mail.\nDéconnectez-vous, reconnectez-vous et rééssayez.', timeout: 7000, hideDismiss: true })
+					usersStore.set({ ...$usersStore, email: $initialValues.email });
+				}
+			});
+		}
+
+		if (profile.phone != $initialValues.phone) {
+			if (profile.phone.trim() === '') {
+				toast.trigger({ ...toastError, message: 'Votre numéro de téléphone est requis', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, phone: false });
+				return false;
+			}
+			if (profile.phone.length !== 10) {
+				toast.trigger({ ...toastError, message: 'Votre numéro de téléphone est invalide', hideDismiss: true });
+				fieldsEnabled.set({ ...$fieldsEnabled, phone: false });
+				return false;
+			}
+
+			await setProfile({ uid: $usersStore.uid, phone: profile.phone });
+		}
+
+		initialValues.set($usersStore);
+
+		isFieldEmpty = false;
+		isSameAsInitial = true;
+
+		resetField();
+		await invalidate('/account');
+		toast.trigger({ ...toastSuccess, message: 'Votre profil a bien été modifié', hideDismiss: true });
+	}
 </script>
 
 <div class="flex flex-col w-full">
@@ -75,7 +162,7 @@
 		</Icon>
 		<span class="ml-2">Mon compte</span>
 	</h2>
-	<form method="post" class="w-full mt-5">
+	<form method="post" class="w-full mt-5" on:submit|preventDefault={handleSubmit}>
 		<div class="flex w-full gap-4">
 			<button type="button" on:click={() => enableField('firstname')} class="w-full mb-5">
 				<label for="firstname" class="flex flex-col w-full cursor-pointer">

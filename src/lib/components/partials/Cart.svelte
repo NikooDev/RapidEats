@@ -1,11 +1,33 @@
 <script lang="ts">
+	import { useAuthStore } from '$lib/stores/auth';
+	import { useUsersStore } from '$lib/stores/user';
 	import { cartStore, totalCart } from '$lib/stores/order';
 	import { Cart, Icon } from '$lib/icons';
-	import type { CartMenuType } from '$lib/interfaces/order';
+	import {
+		type CartMenuType,
+		type OrderGrouped,
+		type OrderType,
+		OrderEnum
+	} from '$lib/interfaces/order';
+	import type { DrawerStore, ModalStore, ToastStore } from '@skeletonlabs/skeleton';
+	import { modalLogin } from '$lib/config/modal';
+	import { getPositionRestaurant, setOrders } from '$lib/firebase/client';
+	import { goto } from '$app/navigation';
+	import { Loading } from '$lib';
+	import { toastSuccess } from '$lib/config/toast';
 
-	$: groupedCart = Object.values($cartStore).reduce((acc: Record<string, CartMenuType>, c: CartMenuType) => {
+	const authStore = useAuthStore();
+	const { userStore } = useUsersStore();
+
+	export let drawer: DrawerStore;
+	export let modal: ModalStore;
+	export let toast: ToastStore
+
+	$: loading = false;
+
+	$: groupedCart = Object.values($cartStore).reduce((acc: Record<string, OrderGrouped>, c: CartMenuType) => {
 		if (!acc[c.restaurantUID]) {
-			acc[c.restaurantUID] = { restaurantTitle: c.restaurantTitle, items: [] } as CartMenuType;
+			acc[c.restaurantUID] = { restaurantTitle: c.restaurantTitle, restaurantUID: c.restaurantUID, items: [] } as OrderGrouped;
 		}
 		acc[c.restaurantUID].items.push(c);
 		return acc;
@@ -42,6 +64,56 @@
 
 			return cart;
 		});
+	}
+
+	const handleOrders = async () => {
+		if ($authStore && $userStore) {
+			if (Object.keys(groupedCart).length === 0) {
+				console.error("Le panier est vide!");
+				return;
+			}
+
+			loading = true;
+
+			const restaurantOrders = await Promise.all(Object.values(groupedCart).map(async (restaurantData) => {
+				const { latitude, longitude } = await getPositionRestaurant(restaurantData.restaurantUID);
+
+				return ({
+					restaurantUID: restaurantData.restaurantUID,
+					title: restaurantData.restaurantTitle,
+					latitude,
+					longitude,
+					menus: restaurantData.items.map(item => ({
+						uid: item.uid,
+						title: item.title,
+						price: item.price,
+						quantity: item.quantity,
+					})),
+				})
+			}));
+
+			const totalPrice = totalPrices.reduce((total, restaurant) => total + restaurant.totalPrice, 0).toFixed(2);
+
+			const order = {
+				restaurants: restaurantOrders,
+				status: OrderEnum.PENDING,
+				totalPrice: parseFloat(totalPrice),
+				created: new Date(),
+			} as OrderType;
+
+			await setOrders($userStore.uid, $userStore.role, order).then(() => {
+				drawer.close();
+				setTimeout(async () => {
+					cartStore.set({});
+					localStorage.removeItem('cart');
+					toast.trigger({ ...toastSuccess, message: 'Votre commande a bien été prise en compte', timeout: 5000, hideDismiss: true });
+					await goto('/orders');
+				}, 200)
+			});
+		} else {
+			drawer.close();
+			setTimeout(() => modal.trigger(modalLogin), 200);
+		}
 	}
 </script>
 
@@ -85,7 +157,13 @@
 			{/each}
 			<div class="sticky flex mt-auto bg-white w-full bottom-0 pb-1">
 				<div class="flex justify-between items-center w-full pt-3 pb-2">
-					<button class="bg-pink-600 font-bold text-sm uppercase hover:bg-pink-700 transition-colors duration-300 text-white px-4 py-2 rounded-2xl">Commander</button>
+					<button disabled={loading} on:click={handleOrders} class="bg-pink-600 font-bold text-sm uppercase hover:bg-pink-700 disabled:hover:bg-pink-600 transition-all duration-300 text-white px-5 flex justify-center items-center h-[42px] rounded-2xl">
+						{#if loading}
+							<Loading height={24} width={24}/>
+						{:else}
+							Commander
+						{/if}
+					</button>
 					<p class="text-pink-600 font-semibold text-lg text-right">TOTAL : {totalPrices.reduce((total, restaurant) => total + restaurant.totalPrice, 0).toFixed(2)} €</p>
 				</div>
 			</div>

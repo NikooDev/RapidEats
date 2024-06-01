@@ -1,13 +1,26 @@
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import {
+	addDoc,
+	arrayRemove,
+	arrayUnion,
+	collection,
+	deleteDoc,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	setDoc,
+	updateDoc,
+	where
+} from 'firebase/firestore';
 import { writable } from 'svelte/store';
+import { setDeliveryman } from '$lib/stores/user';
 import { db } from '$lib/firebase/app';
-import type { RestaurantType } from '$lib/interfaces/user';
+import { type DeliverymanType, type RestaurantType, RoleEnum, StatusEnum, type UsersType } from '$lib/interfaces/user';
 import type MenuType from '$lib/interfaces/menu';
-import type DisheType from '$lib/interfaces/dishe';
+import { OrderEnum, type OrderType } from '$lib/interfaces/order';
 
 export let searchStore = writable<RestaurantType[]>();
 export let searchMenuStore = writable<MenuType[] & { restaurantUID?: string, restaurantTitle?: string }>();
-export let searchDisheStore = writable<DisheType[]>();
 export let loadingStore = writable<boolean>(false);
 
 export const getSearchDatas = async (event: KeyboardEvent) => {
@@ -23,7 +36,6 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 	if (value.trim().length === 0) {
 		searchStore.set(null);
 		searchMenuStore.set(null);
-		searchDisheStore.set(null);
 		loadingStore.set(false);
 	} else if (value.trim().length > 1 && letterRegex.test(value.trim())) {
 		try {
@@ -47,16 +59,10 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 				}));
 			}).filter(menu => menu.title.toLowerCase().includes(value.toLowerCase())).map(menu => ({...menu as MenuType}));
 
-			const dishes = snapshot.docs
-				.flatMap(doc => doc.data().dishes)
-				.filter(dishe => dishe.title.toLowerCase().includes(value.toLowerCase()))
-				.map(dishe => ({...dishe as DisheType}));
-
 			setTimeout(() => loadingStore.set(false), 500);
 
 			searchStore.set(restaurants);
 			searchMenuStore.set(menus);
-			searchDisheStore.set(dishes);
 		} catch (err) {
 			console.error('Error fetching restaurants with searchbox: ', err);
 		}
@@ -64,6 +70,138 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 		loadingStore.set(false);
 		searchStore.set(null);
 		searchMenuStore.set(null);
-		searchDisheStore.set(null);
 	}
 };
+
+export const setProfile = async ({ ...user }: Partial<UsersType>) => {
+	try {
+		const userDocRef = doc(db, 'users', user.uid);
+
+		await setDoc(userDocRef, user, { merge: true });
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export const getPositionRestaurant = async (restaurantUID: string): Promise<{ latitude: string, longitude: string }> => {
+	const q = query(
+		collection(db, 'users'),
+		where('role', '==', 'restaurant'),
+		where('uid', '==', restaurantUID)
+	);
+	const snapshot = await getDocs(q);
+
+	const restaurants = snapshot.docs
+		.map(doc => ({...doc.data() as RestaurantType}));
+
+	return {
+		latitude: restaurants[0].latitude,
+		longitude: restaurants[0].longitude
+	}
+}
+
+export const setOrders = async (uid: string, role: RoleEnum, { ...order }: OrderType) => {
+	if (role === RoleEnum.CUSTOMER) {
+		try {
+			const ordersRef = collection(db, `users/${uid}/orders`);
+			const docRef = await addDoc(ordersRef, order);
+			const docId = docRef.id;
+			const orderWithId = { ...order, uid: docId };
+
+			const userDocRef = doc(db, 'users', uid);
+
+			await setDoc(docRef, orderWithId, { merge: true });
+			await setDoc(userDocRef, {
+				orders: arrayUnion(docId)
+			}, { merge: true });
+		} catch (err) {
+			console.log(err);
+		}
+	}
+}
+
+export const getOrder = async (userUID: string, orderRef: string) => {
+	try {
+		const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef);
+		const orderDocSnap = await getDoc(orderDocRef);
+
+		if (orderDocSnap.exists()) {
+			return { uid: orderDocSnap.id, ...orderDocSnap.data() as OrderType };
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.error('Erreur lors de la récupération de la sous-collection:', error);
+	}
+}
+
+export const cancelOrder = async (userUID: string, orderRef: string) => {
+	const parentDocRef = doc(db, 'users', userUID);
+	const subcollectionRef = collection(parentDocRef, 'orders');
+	const documentRef = doc(subcollectionRef, orderRef);
+
+	try {
+		await updateDoc(parentDocRef, {
+			orders: arrayRemove(orderRef)
+		}).then(async () => {
+			await deleteDoc(documentRef);
+		});
+	} catch (error) {
+		console.error('Erreur lors de la suppression de la commande: ', error);
+	}
+}
+
+export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
+	const findDeliveryman = async (): Promise<boolean> => {
+		const q = query(
+			collection(db, 'users'),
+			where('role', '==', 'deliveryman'),
+			where('status', '==', StatusEnum.AVAILABLE)
+		);
+
+		const snapshot = await getDocs(q);
+
+		if (!snapshot.empty) {
+			const deliveryman = snapshot.docs.map(doc => ({ ...doc.data() as DeliverymanType }));
+
+			const randomIndex = Math.floor(Math.random() * deliveryman.length);
+			const chosenDeliveryman = deliveryman[randomIndex];
+
+			setDeliveryman(chosenDeliveryman);
+
+			const deliveryDocRef = doc(db, 'users', chosenDeliveryman.uid);
+			const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef.uid);
+
+			await setDoc(deliveryDocRef, { status: StatusEnum.ON_DELIVERY }, { merge: true });
+			await setDoc(orderDocRef, {
+				status: OrderEnum.IN_DELIVERY,
+				deliveryman: chosenDeliveryman
+			}, { merge: true });
+
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	const checkAvailability = async (): Promise<boolean> => {
+		const result = await findDeliveryman();
+		if (result) {
+			return true;
+		} else {
+			return new Promise((resolve) => {
+				setTimeout(async () => {
+					const nextResult = await checkAvailability();
+					resolve(nextResult);
+				}, 3000);
+			});
+		}
+	};
+
+	try {
+		return await checkAvailability();
+	} catch (error) {
+		console.error("Error confirming order:", error);
+		return false;
+	}
+}

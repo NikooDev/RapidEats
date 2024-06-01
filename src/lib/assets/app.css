@@ -162,3 +162,7 @@ body {
 .maplibregl-popup-close-button {
 	display: none;
 }
+
+.noOverflow {
+	overflow-y: hidden!important;
+}

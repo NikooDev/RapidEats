@@ -3,6 +3,7 @@
 	import '$lib/helpers/serialize';
 	import { browser } from '$app/environment';
 	import { page, navigating } from '$app/stores';
+	import { toastError } from '$lib/config/toast';
 	import { Cart, Header, Login, MenuCard, Navigation, Signup } from '$lib';
 	import { fade } from 'svelte/transition';
 	import { onDestroy } from 'svelte';
@@ -14,9 +15,10 @@
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { subscribeModal } from '$lib/config/modal';
 	import { subscribeDrawer } from '$lib/config/drawer';
+	import { useUsersStore } from '$lib/stores/user';
 	import { useSettingsStore } from '$lib/stores/app';
 	import { useAuthStore } from '$lib/stores/auth';
-	import { toastError } from '$lib/config/toast';
+	import Intro from '$lib/components/Intro.svelte';
 
 	if (browser) {
 		initializeStores();
@@ -25,6 +27,7 @@
 
 	const authStore = useAuthStore();
 	const { settingsStore } = useSettingsStore();
+	const { userStore } = useUsersStore();
 
 	const drawerStore = getDrawerStore();
 	const modalStore = getModalStore();
@@ -84,6 +87,11 @@
 {#if isPageError}
 	<p>Error page {$page.error.message}</p> <!-- Créer un component Error page -->
 {:else}
+
+	{#if $userStore && $userStore.tuto}
+		<Intro/>
+	{/if}
+
 	<Toast rounded="rounded-lg" position="t" padding="py-3 px-5" zIndex="z-[1000]" buttonDismiss="text-[.9rem] hover:text-pink-600 text-slate-800 transition-colors duration-300" buttonDismissLabel="Fermer"/>
 
 	<Header drawer={drawerStore} modal={modalStore} toast={toastStore}/>
@@ -92,7 +100,7 @@
 		{#if $drawerStore.id === 'navigation'}
 			<Navigation drawer={drawerStore} modal={modalStore}/>
 		{:else if $drawerStore.id === 'cart'}
-			<Cart/>
+			<Cart drawer={drawerStore} modal={modalStore} toast={toastStore}/>
 		{/if}
 	</Drawer>
 
@@ -101,4 +109,5 @@
 	</main>
 
 	<Modal components={modalRegistry} transitionIn={fade} transitionOut={fade}/>
+
 {/if}

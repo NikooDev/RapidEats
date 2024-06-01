@@ -1,7 +1,6 @@
 import type { Timestamp } from 'firebase/firestore'
-import OrderType from '$lib/interfaces/order';
+import { OrderType } from '$lib/interfaces/order';
 import MenuType from '$lib/interfaces/menu';
-import DisheType from '$lib/interfaces/dishe';
 
 export enum RoleEnum {
 	CUSTOMER = 'customer',
@@ -9,7 +8,7 @@ export enum RoleEnum {
 	DELIVERYMAN = 'deliveryman'
 }
 
-enum StatusEnum {
+export enum StatusEnum {
 	AVAILABLE = 'available',
 	ON_DELIVERY = 'on_delivery',
 	UNAVAILABLE = 'unavailable'
@@ -24,11 +23,12 @@ interface UserType {
 	role: RoleEnum
 	latitude: string
 	longitude: string
+	tuto: boolean
 	created: Date | Timestamp
 	updated: Date | Timestamp
 }
 
-interface AddressType {
+export interface AddressType {
 	street: string
 	postalCode: string
 	city: string
@@ -38,7 +38,7 @@ export interface CustomerType extends UserType {
 	lastname: string
 	firstname: string
 	address: AddressType
-	orders?: OrderType[]
+	orders?: string[]
 }
 
 export interface RestaurantType extends UserType {
@@ -50,7 +50,6 @@ export interface RestaurantType extends UserType {
 	slug: string
 	address: AddressType
 	menus?: MenuType[]
-	dishes?: DisheType[]
 	orders?: OrderType[]
 }
 

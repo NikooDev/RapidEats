@@ -1,8 +1,21 @@
 import { DecodedIdToken } from 'firebase-admin/auth';
+import { AddressType } from '$lib/interfaces/user';
 
 export interface AuthType {
 	email: string
 	password: string
+}
+
+export interface RegisterType {
+	address: AddressType
+	firstname: string
+	lastname: string
+	email: string
+	password: string
+	confirmation: string
+	phone: string
+	longitude: string
+	latitude: string
 }
 
 export interface AuthUser {
@@ -15,6 +28,6 @@ export interface SuggestionsAddressType {
 	street: string,
 	postalCode: string,
 	city: string,
-	longitude: number,
-	latitude: number
+	longitude: string,
+	latitude: string
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { useUsersStore } from '$lib/stores/user';
 	import Masonry from 'svelte-bricks';
 	import Profile from '$lib/components/app/account/Profile.svelte';
 	import Historic from '$lib/components/app/account/Historic.svelte';
 	import Address from '$lib/components/app/account/Address.svelte';
-	import { onMount } from 'svelte';
 
 	const { userStore } = useUsersStore();
 	const dashboard = [{ uid: 1, component: Profile }, { uid: 2, component: Address }];
