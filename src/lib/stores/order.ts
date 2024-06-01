@@ -11,7 +11,7 @@ export const cartStore =
 
 toLocalStorage(cartStore, 'cart');
 
-export const ordersStore = writable <OrderType[]> ([]);
+export const ordersStore = writable<OrderType[]> ([]);
 export const ordersCount = writable<number>(0);
 
 export const totalCart = writable(0);

@@ -109,8 +109,7 @@
 						</Icon>
 					</span>
 				</span>
-				vous pouvez utiliser le menu de la barre latérale pour naviguer sur le site.
-				<br/>Vous pouvez voir un aperçu de vos commandes en cours de livraison.
+				vous pouvez voir un aperçu de vos 5 dernières commandes en cours de livraison.
 			</p>
 			<div class="flex justify-between items-center mt-3 px-1 py-2">
 				<button on:click={handlePrev} class="bg-slate-500 text-white hover:bg-slate-600 text-sm font-semibold transition-colors duration-300 px-3 py-1 rounded-lg">Précédent</button>
