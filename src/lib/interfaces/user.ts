@@ -24,6 +24,7 @@ interface UserType {
 	latitude: string
 	longitude: string
 	tuto: boolean
+	admin: boolean
 	created: Date | Timestamp
 	updated: Date | Timestamp
 }

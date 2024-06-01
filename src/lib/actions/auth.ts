@@ -46,6 +46,7 @@ export const register = async (event: Event, data: RegisterType & AuthType, toas
 				try {
 					await setDoc(docUsers, {
 						address: data.address,
+						admin: false,
 						created: new Date(),
 						email: data.email,
 						firstname: data.firstname,

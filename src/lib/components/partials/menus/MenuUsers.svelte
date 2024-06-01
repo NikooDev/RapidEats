@@ -9,6 +9,8 @@
 	import { OrderEnum } from '$lib/interfaces/order';
 	import { ordersCount } from '$lib/stores/order';
 	import { Loading } from '$lib';
+	import Users from '$lib/icons/Users.svelte';
+	import Diamond from '$lib/icons/Diamond.svelte';
 
 	export let user: UsersType;
 	export let popupUserState: boolean;
@@ -67,11 +69,20 @@
 			</div>
 		{/if}
 		<div class="flex">
-			<a href="/account" class="flex items-center px-4 group py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
-				<Icon height={50} width={50}>
-					<UserCircle/>
-				</Icon>
-				<div class="flex flex-col">
+			<a href="/account" class="flex items-center group px-4 group py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
+				<span class="relative">
+					<Icon height={50} width={50}>
+						<UserCircle/>
+					</Icon>
+					{#if user.admin}
+						<span class="absolute z-0 bg-slate-800 group-hover:bg-white group-hover:text-pink-600 w-7 h-7 pt-0.5 -top-0 -right-2.5 flex justify-center items-center text-white rounded-full transition-colors duration-200">
+							<Icon>
+								<Diamond/>
+							</Icon>
+						</span>
+					{/if}
+				</span>
+				<div class="flex flex-col {user.admin ? 'ml-3' : 'ml-0'}">
 					<span class="ml-2 overflow-hidden text-ellipsis whitespace-nowrap max-w-48">
 						{#if isCustomer}
 							{ user.firstname.toCapitalize() + ' ' + user.lastname.toCapitalize() }
@@ -87,6 +98,18 @@
 				</div>
 			</a>
 		</div>
+		<div class="h-0.5 bg-slate-200 w-full my-0.5"/>
+		{#if user.admin}
+			<div class="flex">
+				<a href="/dashboard" data-sveltekit-preload-data="tap" class="flex px-4 py-2 font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
+					<Icon height={24} width={24}>
+						<Users/>
+					</Icon>
+					<span class="ml-3">Gestion utilisateurs</span>
+				</a>
+			</div>
+			<div class="h-0.5 bg-slate-200 w-full my-0.5"/>
+		{/if}
 		<div class="flex">
 			<a href="/orders" class="flex px-4 py-2 group font-medium text-slate-800 w-full hover:bg-pink-600 hover:text-white transition-colors duration-200">
 				<Icon height={24} width={24}>

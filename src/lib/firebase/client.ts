@@ -15,7 +15,14 @@ import {
 import { writable } from 'svelte/store';
 import { setDeliveryman } from '$lib/stores/user';
 import { db } from '$lib/firebase/app';
-import { type DeliverymanType, type RestaurantType, RoleEnum, StatusEnum, type UsersType } from '$lib/interfaces/user';
+import {
+	CustomerType,
+	type DeliverymanType,
+	type RestaurantType,
+	RoleEnum,
+	StatusEnum,
+	type UsersType
+} from '$lib/interfaces/user';
 import type MenuType from '$lib/interfaces/menu';
 import { OrderEnum, type OrderType } from '$lib/interfaces/order';
 
@@ -23,6 +30,12 @@ export let searchStore = writable<RestaurantType[]>();
 export let searchMenuStore = writable<MenuType[] & { restaurantUID?: string, restaurantTitle?: string }>();
 export let loadingStore = writable<boolean>(false);
 
+/**
+ * @description Formulaire de recherche
+ * => Récupération des restaurants et de ses menus
+ * => Filtrage sur les titres
+ * @param event
+ */
 export const getSearchDatas = async (event: KeyboardEvent) => {
 	const target = event.target as HTMLInputElement;
 	const value = target.value;
@@ -73,6 +86,22 @@ export const getSearchDatas = async (event: KeyboardEvent) => {
 	}
 };
 
+/**
+ * @description Pour le rôle Admin
+ * => Récupération de tous les clients
+ */
+export const getCustomers = async () => {
+	const q = query(collection(db, 'users'), where('role', '==', 'customer'));
+	const snapshot = await getDocs(q);
+
+	return snapshot.docs
+		.map(doc => ({...doc.data() as CustomerType}));
+}
+
+/**
+ * @description Modification du profil
+ * @param user
+ */
 export const setProfile = async ({ ...user }: Partial<UsersType>) => {
 	try {
 		const userDocRef = doc(db, 'users', user.uid);
@@ -83,6 +112,10 @@ export const setProfile = async ({ ...user }: Partial<UsersType>) => {
 	}
 }
 
+/**
+ * @description Récupération de la position d'un restaurant
+ * @param restaurantUID
+ */
 export const getPositionRestaurant = async (restaurantUID: string): Promise<{ latitude: string, longitude: string }> => {
 	const q = query(
 		collection(db, 'users'),
@@ -100,7 +133,14 @@ export const getPositionRestaurant = async (restaurantUID: string): Promise<{ la
 	}
 }
 
-export const setOrders = async (uid: string, role: RoleEnum, { ...order }: OrderType) => {
+/**
+ * @description Ajoute le contenu du panier en commande
+ * => Ajoute sa référence dans le tableau order[] de l'utilisateur
+ * @param uid
+ * @param role
+ * @param order
+ */
+export const addOrders = async (uid: string, role: RoleEnum, { ...order }: OrderType) => {
 	if (role === RoleEnum.CUSTOMER) {
 		try {
 			const ordersRef = collection(db, `users/${uid}/orders`);
@@ -120,6 +160,11 @@ export const setOrders = async (uid: string, role: RoleEnum, { ...order }: Order
 	}
 }
 
+/**
+ * @description Récupération d'une commande selon sa référence
+ * @param userUID
+ * @param orderRef
+ */
 export const getOrder = async (userUID: string, orderRef: string) => {
 	try {
 		const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef);
@@ -135,6 +180,11 @@ export const getOrder = async (userUID: string, orderRef: string) => {
 	}
 }
 
+/**
+ * @description Annulation d'une commande
+ * @param userUID
+ * @param orderRef
+ */
 export const cancelOrder = async (userUID: string, orderRef: string) => {
 	const parentDocRef = doc(db, 'users', userUID);
 	const subcollectionRef = collection(parentDocRef, 'orders');
@@ -151,6 +201,14 @@ export const cancelOrder = async (userUID: string, orderRef: string) => {
 	}
 }
 
+/**
+ * @description Lorsque qu'un client à confirmer sa commande
+ * => Recherche d'un livreur toutes les secondes
+ * => Modification du statut du livreur
+ * => Ajout du livreur à la commande
+ * @param userUID
+ * @param orderRef
+ */
 export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
 	const findDeliveryman = async (): Promise<boolean> => {
 		const q = query(
@@ -173,6 +231,9 @@ export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
 			const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef.uid);
 
 			await setDoc(deliveryDocRef, { status: StatusEnum.ON_DELIVERY }, { merge: true });
+
+			delete chosenDeliveryman.orders;
+
 			await setDoc(orderDocRef, {
 				status: OrderEnum.IN_DELIVERY,
 				deliveryman: chosenDeliveryman
@@ -184,6 +245,10 @@ export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
 		}
 	};
 
+	/**
+	 * @description Toutes les secondes
+	 * => findDeliveryman() est rééxécutée si aucun livreur n'est disponible
+	 */
 	const checkAvailability = async (): Promise<boolean> => {
 		const result = await findDeliveryman();
 		if (result) {
@@ -204,4 +269,18 @@ export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
 		console.error("Error confirming order:", error);
 		return false;
 	}
+}
+
+/**
+ * @description Récupération des commandes terminées
+ * @param userUID
+ */
+export const getDeliveredOrders = async (userUID: string) => {
+	const q = query(
+		collection(db, 'users', userUID, 'orders'), where('status', '==', OrderEnum.DELIVERED)
+	);
+
+	const snapshot = await getDocs(q);
+
+	return snapshot.docs.map(doc => ({...doc.data() as OrderType}));
 }

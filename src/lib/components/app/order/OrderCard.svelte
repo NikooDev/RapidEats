@@ -102,7 +102,7 @@
 		{/each}
 	</div>
 	<div class="h-0.5 bg-slate-200 w-full my-3"/>
-	<p class="text-slate-800 font-semibold flex justify-end">TOTAL : { data.totalPrice.toFixed(2) } €</p>
+	<p class="text-slate-800 font-semibold flex justify-end text-lg">TOTAL : { data.totalPrice.toFixed(2) } €</p>
 	<div class="flex justify-start">
 		{#if status === 'in_delivery'}
 			<a href="/orders/track?order={data.uid}"

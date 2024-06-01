@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
 import { db } from '$lib/firebase/app';
-import type { DeliverymanType, RestaurantType, UsersType } from '$lib/interfaces/user';
+import type { CustomerType, DeliverymanType, RestaurantType, UsersType } from '$lib/interfaces/user';
 
 /**
  * Store des utilisateurs :
@@ -11,6 +11,7 @@ import type { DeliverymanType, RestaurantType, UsersType } from '$lib/interfaces
  */
 
 const userStore = writable<UsersType>();
+const customersStore = writable<CustomerType[]>();
 const restaurantsStore = writable<RestaurantType[]>();
 const restaurantStore = writable<RestaurantType>();
 const deliverymansStore = writable<DeliverymanType[]>();
@@ -18,6 +19,10 @@ const deliverymanStore = writable<DeliverymanType>();
 
 export const setUser = (data: UsersType) => {
 	userStore.set(data);
+}
+
+export const setCustomers = (data: CustomerType[]) => {
+	customersStore.set(data);
 }
 
 export const setRestaurants = (data: RestaurantType[]) => {
@@ -73,6 +78,7 @@ export const initializeSnapshot = (userUID: string | null) => {
 export const useUsersStore = () => {
 	return {
 		userStore,
+		customersStore,
 		restaurantsStore,
 		restaurantStore,
 		deliverymansStore,

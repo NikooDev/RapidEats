@@ -11,7 +11,7 @@
 	} from '$lib/interfaces/order';
 	import type { DrawerStore, ModalStore, ToastStore } from '@skeletonlabs/skeleton';
 	import { modalLogin } from '$lib/config/modal';
-	import { getPositionRestaurant, setOrders } from '$lib/firebase/client';
+	import { getPositionRestaurant, addOrders } from '$lib/firebase/client';
 	import { goto } from '$app/navigation';
 	import { Loading } from '$lib';
 	import { toastSuccess } from '$lib/config/toast';
@@ -101,7 +101,7 @@
 				created: new Date(),
 			} as OrderType;
 
-			await setOrders($userStore.uid, $userStore.role, order).then(() => {
+			await addOrders($userStore.uid, $userStore.role, order).then(() => {
 				drawer.close();
 				setTimeout(async () => {
 					cartStore.set({});

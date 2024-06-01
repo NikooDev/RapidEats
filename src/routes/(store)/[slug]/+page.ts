@@ -6,6 +6,6 @@ export const load: PageLoad = async ({ data }) => {
 	if (data && data.restaurant) {
 		setRestaurant(data.restaurant);
 	} else {
-		await goto('/?redirect=notfound');
+		return await goto('/?redirect=notfound');
 	}
 }

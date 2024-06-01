@@ -38,7 +38,7 @@
 
 	const setNotifError = () => {
 		toastStore.clear();
-		toastStore.trigger({ ...toastError, message: 'Ce restaurant n\'existe pas', hideDismiss: true });
+		toastStore.trigger({ ...toastError, message: 'Cette page n\'existe pas', hideDismiss: true });
 	}
 
 	const isPageError = $page.error && $page.error.message.length > 0;
