@@ -18,10 +18,6 @@
 	$: ordersInDelivery = $ordersStore.filter((order) => order.status === OrderEnum.IN_DELIVERY);
 	$: showOrderInDelivery = true;
 
-	/**
-	 * Dans le tracker, attendre 10 secondes avant d'attribuer un livreur et lancer le trajet
-	 */
-
 	onMount(async () => {
 		const orders = await Promise.all($userStore.orders.map(async refOrder => {
 			return await getOrder($userStore.uid, refOrder);

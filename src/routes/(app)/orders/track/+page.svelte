@@ -3,7 +3,6 @@
 	import { orderStore } from '$lib/stores/order';
 
 	$: order = $orderStore;
-
 	$: created = order.created.toDate().toLocaleDateString('fr-FR', {
 		year: 'numeric',
 		month: 'long',
