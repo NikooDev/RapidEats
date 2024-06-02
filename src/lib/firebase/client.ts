@@ -100,13 +100,25 @@ export const getCustomers = async () => {
 
 /**
  * @description Modification du profil
+ * => Si modification avec subCollection et ref,
+ * il faut s'assurer d'avoir les mêmes infos dans les deux collections
  * @param user
+ * @param subUID
+ * @param subUser
+ * @param subCollection
+ * @param ref
  */
-export const setProfile = async ({ ...user }: Partial<UsersType>) => {
+export const setProfile = async <T>({ ...user }: Partial<UsersType>, subUID?: string, subUser?: T, subCollection?: string, ref?: string) => {
 	try {
 		const userDocRef = doc(db, 'users', user.uid);
 
 		await setDoc(userDocRef, user, { merge: true });
+
+		if (subUID && subUser && subCollection && ref) {
+			const subUserDocRef = doc(db, 'users', subUID, subCollection, ref);
+
+			await setDoc(subUserDocRef, subUser, { merge: true });
+		}
 	} catch (err) {
 		console.log(err);
 	}
@@ -164,19 +176,38 @@ export const addOrders = async (uid: string, role: RoleEnum, { ...order }: Order
  * @description Récupération d'une commande selon sa référence
  * @param userUID
  * @param orderRef
+ * @param delivered
  */
-export const getOrder = async (userUID: string, orderRef: string) => {
+export const getOrder = async (userUID: string, orderRef: string, delivered?: boolean) => {
 	try {
 		const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef);
 		const orderDocSnap = await getDoc(orderDocRef);
 
 		if (orderDocSnap.exists()) {
-			return { uid: orderDocSnap.id, ...orderDocSnap.data() as OrderType };
+			const order = orderDocSnap.data() as OrderType;
+
+			if (delivered && order.status !== OrderEnum.IN_DELIVERY) {
+				return null;
+			}
+
+			return { uid: orderDocSnap.id, ...order };
 		} else {
 			return null;
 		}
 	} catch (error) {
 		console.error('Erreur lors de la récupération de la sous-collection:', error);
+	}
+}
+
+export const setOrder = async (userUID: string, orderRef: string, { ...order }: OrderType) => {
+	try {
+		const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef);
+
+		await setDoc(orderDocRef, order, { merge: true });
+
+		console.log('Document successfully updated!');
+	} catch (error) {
+		console.error('Erreur lors de la mise à jour du document:', error);
 	}
 }
 

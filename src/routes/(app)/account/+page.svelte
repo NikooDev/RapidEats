@@ -18,7 +18,7 @@
 
 		window.addEventListener('resize', () => {
 			const col = document.querySelectorAll('.col') as NodeListOf<HTMLDivElement>;
-			dashboardRef = col[0].clientWidth * 2 + 20;
+			dashboardRef = col[0] && col[0].clientWidth * 2 + 20;
 		})
 	})
 </script>

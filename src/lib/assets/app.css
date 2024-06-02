@@ -89,12 +89,12 @@ tbody tr:nth-child(odd) {
 }
 
 .map-wrap {
-	box-shadow: -4px 2px 10px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	box-shadow: 0 0 10px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 	height: calc(100vh - 4rem);
 }
 
 .map-track {
-	box-shadow: -4px 2px 10px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	box-shadow: 0 0 10px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .shadow-center {

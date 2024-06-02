@@ -1,10 +1,11 @@
 import { writable } from 'svelte/store';
 import { fromLocalStorage, toLocalStorage } from '$lib/stores/app';
-import { OrderType, CartType, OrderEnum } from '$lib/interfaces/order';
+import { type OrderType, type CartType, OrderEnum } from '$lib/interfaces/order';
 import { browser } from '$app/environment';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '$lib/firebase/app';
 import { UsersType } from '$lib/interfaces/user';
+import { setDeliveryman } from '$lib/stores/user';
 
 export const cartStore =
 	writable<CartType>(fromLocalStorage('cart', {}));
@@ -12,7 +13,9 @@ export const cartStore =
 toLocalStorage(cartStore, 'cart');
 
 export const ordersStore = writable<OrderType[]> ([]);
+export const orderStore = writable<OrderType>();
 export const ordersCount = writable<number>(0);
+export const timeOut = writable<number>(0);
 
 export const totalCart = writable(0);
 
@@ -22,9 +25,8 @@ if (browser) {
 	});
 }
 
-export const initializeSnapshotOrder = (userUID: string) => {
+export const initializeSnapshotOrders = (userUID: string) => {
 	onSnapshot(doc(db, 'users', userUID), async (snapDoc) => {
-
 		const userData = snapDoc.data() as UsersType;
 
 		await Promise.all(userData.orders.map(async refOrder => {
@@ -57,5 +59,14 @@ export const initializeSnapshotOrder = (userUID: string) => {
 				});
 			});
 		}));
+	});
+}
+
+export const initializeSnapshotOrder = (userUID: string, orderRef: string) => {
+	onSnapshot(doc(db, 'users', userUID, 'orders', orderRef), (snapshot) => {
+		const data = snapshot.data() as OrderType;
+
+		orderStore.set(data);
+		setDeliveryman(data.deliveryman);
 	});
 }

@@ -10,8 +10,7 @@ export enum RoleEnum {
 
 export enum StatusEnum {
 	AVAILABLE = 'available',
-	ON_DELIVERY = 'on_delivery',
-	UNAVAILABLE = 'unavailable'
+	ON_DELIVERY = 'on_delivery'
 }
 
 type FoodType = 'pizza' | 'burger' | 'asiatique' | 'salade' | 'restaurant'

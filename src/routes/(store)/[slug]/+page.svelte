@@ -5,12 +5,13 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { config, Map, MapStyle, Marker } from '@maptiler/sdk';
 	import { Notation } from '$lib';
+	import { keyMapTiler } from '$lib/config/app';
 
 	const { restaurantStore } = useUsersStore();
 
 	$: restaurant = $restaurantStore;
 
-	config.apiKey = 'BDnu8t7usofNcbcmeIBe';
+	config.apiKey = keyMapTiler;
 	let map: Map;
 	let mapContainer: HTMLElement;
 

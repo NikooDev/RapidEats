@@ -5,7 +5,7 @@
 	import { confirmOrder } from '$lib/firebase/client';
 	import { useUsersStore } from '$lib/stores/user';
 	import { getModalStore } from '@skeletonlabs/skeleton';
-	import { invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
 	export let order: OrderType;
 	const { userStore, deliverymanStore } = useUsersStore();
@@ -20,7 +20,10 @@
 
 		if (result) {
 			search = false;
-			timer = setTimeout(() => modalStore.clear(), 1000);
+			timer = setTimeout(async () => {
+				modalStore.clear();
+				await goto(`/orders/track?order=${order.uid}`);
+			}, 1000);
 		}
 	});
 

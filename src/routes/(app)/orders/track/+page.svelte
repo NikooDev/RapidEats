@@ -1,63 +1,55 @@
 <script lang="ts">
-	import { useUsersStore } from '$lib/stores/user';
-	import Track from '$lib/components/Track.svelte';
-	import { Icon, Order } from '$lib/icons';
+	import Track from '$lib/components/app/Track.svelte';
+	import { orderStore } from '$lib/stores/order';
 
-	const { userStore, restaurantsStore } = useUsersStore();
-	let showTracker = false;
-	let fullName = `${$userStore.firstname.toCapitalize()} ${$userStore.lastname.toCapitalize()}`;
+	$: order = $orderStore;
 
-	/**
-	 * Attribuer un livreur à la commande
-	 * Modifier le status du livreur (en livraison) et de la commande "En attente"
-	 * Attendre 10 secondes avant l'envoie du livreur (notification pour informer les clients)
-	 *
-	 * Modifier le status de la commande "En livraison"
-	 *
-	 * Pour chaque commande dans $userStore.orders[index]
-	 * Envoyer dans le Tracker
-	 * - $userStore.orders[index].restaurant.title
-	 * - $userStore.orders[index].restaurant.latitude
-	 * - $userStore.orders[index].restaurant.longitude
-	 * - $userStore.firstname
-	 * - $userStore.latitude
-	 * - $userStore.longitude
-	 *
-	 * Stocker le temps de trajet dans le store en millisecondes
-	 * Attribuer la position du restaurant au livreur
-	 * Mettre à jour dans Firebase la latitude et longitude du livreur dans l'animation (chaque seconde) du tracker.
-	 * Au rechargement de la page, le livreur ne recommencera pas le trajet à zéro
-	 *
-	 * Lorsque la commande est livrée, notification pour indiquer que le livreur est arrivé
-	 * Afficher un bouton pour mettre fin à la commande
-	 * Au clic, modifier le status de la commande à "Terminée"
-	 */
-
-	const ok = () => {
-		showTracker = !showTracker;
-	}
+	$: created = order.created.toDate().toLocaleDateString('fr-FR', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric'
+	});
 </script>
 
 <svelte:head>
 	<title>Rapid Eats | Tracker</title>
 </svelte:head>
 
-<div class="flex items-center flex-wrap justify-between" style="height: calc(100vh - 4rem)">
-	<div class="w-full flex flex-col justify-center items-center text-slate-500">
-		<Icon height={80} width={80}>
-			<Order/>
-		</Icon>
-		<p class="text-slate-800 font-bold text-2xl mt-3">Aucune commande pour le moment</p>
-		<p class="text-slate-800 font-medium mt-2">Lorsque vous passerez une commande, elle s'affichera ici.</p>
-		<button on:click|preventDefault={ok}>
-			POST
-		</button>
+<div class="flex items-center container mx-auto flex-wrap justify-between" style="height: calc(100vh - 4rem)">
+	<div class="flex flex-col justify-center w-full items-start relative mt-5 mb-5 -z-0">
+		<div class="flex flex-col w-full bg-white min-h-[18.5rem] rounded-2xl shadow-md pr-5 pl-4 py-5">
+			<div class="flex flex-col md:flex-row w-full">
+				<div class="flex flex-col w-full">
+					<div class="flex items-center justify-between">
+						<p class="text-slate-800 font-semibold text-lg whitespace-nowrap">Commande n° { order.uid.substring(10).toUpperCase() }</p>
+					</div>
+					<p class="text-sm text-slate-500 font-medium">{ created }</p>
+					<p class="mt-3 text-slate-800 font-medium">Statut : { order.status === 'in_delivery' ? 'En livraison' : 'Livrée' }</p>
+					<p class="text-slate-800 font-medium">Livreur : { order.deliveryman.firstname.toCapitalize() }</p>
+					<p class="text-slate-800 bg-white mt-3 font-semibold flex text-lg">TOTAL : { order.totalPrice.toFixed(2) } €</p>
+				</div>
+				<div class="flex flex-col w-full mt-5 md:mt-0 overflow-auto">
+					{#each order.restaurants as restaurant}
+						<div class="flex items-center">
+							<p class="text-pink-600 font-semibold">{ restaurant.title }</p>
+						</div>
+						{#each restaurant.menus as menu, index}
+							<div class="flex items-center justify-between bg-slate-100 rounded-3xl hover:bg-slate-200 transition-colors duration-200 last:mb-0 m-2 p-2 {index === restaurant.menus.length - 1 ? 'mb-3' : 'mb-0'}">
+								<div class="flex items-center overflow-hidden">
+									<p class="text-lg text-slate-800 font-semibold h-7 min-w-7 w-auto mr-3 px-1.5 flex justify-center items-center bg-slate-200 rounded-2xl">{ menu.quantity }</p>
+									<p class="text-sm text-slate-800 font-semibold pr-5 whitespace-nowrap w-80 text-ellipsis overflow-hidden">{ menu.title }</p>
+								</div>
+								<p class="text-sm text-slate-800 font-semibold whitespace-nowrap pr-1">{ menu.price.toFixed(2) } €</p>
+							</div>
+						{/each}
+					{/each}
+				</div>
+			</div>
+		</div>
 	</div>
-
-	<div class="map-track sm:rounded-t-2xl rounded-none w-full container mx-auto mt-auto overflow-hidden relative">
-		{#if showTracker}
-			<Track fullName={fullName} restaurant={$restaurantsStore[2].title} geoUser={{lat: parseFloat($userStore.latitude), lng: parseFloat($userStore.longitude)}}
-						 geoDeliveryman={{lat: parseFloat($restaurantsStore[2].latitude), lng: parseFloat($restaurantsStore[2].longitude)}}/>
-		{/if}
+	<div class="map-track bg-white sm:rounded-t-2xl rounded-none w-full mt-auto sticky bottom-0 overflow-hidden z-10">
+		<Track order={order}/>
 	</div>
 </div>

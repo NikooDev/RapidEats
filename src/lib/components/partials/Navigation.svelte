@@ -66,7 +66,7 @@
 							</div>
 							<div class="flex flex-col gap-2">
 								{#each ordersInDelivery as order}
-									<a href="/orders/track?={order.uid}" class="bg-white group shadow-md hover:shadow-lg transition-all duration-200 w-full px-3 py-3 rounded-lg">
+									<a href="/orders/track?order={order.uid}" class="bg-white group shadow-md hover:shadow-lg transition-all duration-200 w-full px-3 py-3 rounded-lg">
 										<span class="text-sm font-medium group-hover:text-pink-600 transition-colors duration-200">Commande n° { order.uid.substring(10).toUpperCase() }</span>
 										<p class="text-xs text-slate-500 font-medium">{ dateFormat(order.created) }</p>
 									</a>

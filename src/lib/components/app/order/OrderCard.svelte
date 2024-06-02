@@ -63,7 +63,7 @@
 					order: order
 				}
 			}
-		})
+		});
 	}
 </script>
 
