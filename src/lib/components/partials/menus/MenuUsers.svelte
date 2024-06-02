@@ -46,14 +46,16 @@
 	<Icon height={28} width={28}>
 		<User/>
 	</Icon>
-	{#if isCustomer && !loading}
-		<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5">
-			{ $ordersCount }
-		</span>
-	{:else}
-		<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5 flex justify-center items-center">
-			<Loading height={13} width={13}/>
-		</span>
+	{#if isCustomer}
+		{#if !loading}
+			<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5">
+				{ $ordersCount }
+			</span>
+		{:else}
+			<span class="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 bg-pink-600 text-white rounded-[30px] text-sm font-semibold leading-5 flex justify-center items-center">
+				<Loading height={13} width={13}/>
+			</span>
+		{/if}
 	{/if}
 </button>
 <div class="absolute" data-popup="popupUser">

@@ -5,9 +5,10 @@
 	import Profile from '$lib/components/app/account/Profile.svelte';
 	import Historic from '$lib/components/app/account/Historic.svelte';
 	import Address from '$lib/components/app/account/Address.svelte';
+	import { RoleEnum } from '$lib/interfaces/user';
 
 	const { userStore } = useUsersStore();
-	const dashboard = [{ uid: 1, component: Profile }, { uid: 2, component: Address }];
+	const dashboard = $userStore.role === RoleEnum.CUSTOMER ? [{ uid: 1, component: Profile }, { uid: 2, component: Address }] : [{ uid: 1, component: Profile }];
 	const historic = [{ uid: 1, component: Historic }];
 
 	let dashboardRef: number;
