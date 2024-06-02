@@ -2,6 +2,11 @@
 Application de gestion de livraison pour restaurant
 
 
+## Demo
+
+https://rapid-eats.vercel.app/
+
+
 ## Fonctionnalités
 
 - Authentification
@@ -33,8 +38,3 @@ Application de gestion de livraison pour restaurant
     - /stores : Stores SvelteKit
     - /validator : Validation de formulaire
 - /routes
-
-
-## Demo
-
-https://rapid-eats.vercel.app/
