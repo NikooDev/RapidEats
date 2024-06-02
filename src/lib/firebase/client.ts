@@ -6,7 +6,7 @@ import {
 	deleteDoc,
 	doc,
 	getDoc,
-	getDocs,
+	getDocs, orderBy,
 	query,
 	setDoc,
 	updateDoc,
@@ -306,7 +306,9 @@ export const confirmOrder = async (userUID: string, orderRef: OrderType) => {
  */
 export const getDeliveredOrders = async (userUID: string) => {
 	const q = query(
-		collection(db, 'users', userUID, 'orders'), where('status', '==', OrderEnum.DELIVERED)
+		collection(db, 'users', userUID, 'orders'),
+		where('status', '==', OrderEnum.DELIVERED),
+		orderBy('created', 'desc')
 	);
 
 	const snapshot = await getDocs(q);
