@@ -38,7 +38,7 @@
 			<Loading height={50} width={50} color="text-white" fill="fill-pink-600"/>
 		</div>
 	{:else}
-		{#if ordersPending.length === 0 || ordersInDelivery === 0}
+		{#if ordersPending.length === 0 && ordersInDelivery.length === 0}
 			<div class="w-full flex flex-col justify-center items-center text-slate-500 text-center h-[60vh]">
 				<Icon height={80} width={80}>
 					<Order/>

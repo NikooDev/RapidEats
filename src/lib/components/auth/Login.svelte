@@ -49,6 +49,9 @@
 						errorMessage = 'Votre adresse e-mail est incorrecte';
 						!recoverPassword ? emailRef.focus() : recoverRef.focus();
 						break;
+					case 'auth/user-not-found':
+						errorMessage = 'Vos identifiants sont incorrects';
+						break;
 					case 'auth/missing-password':
 						errorMessage = 'Votre mot de passe est incorrect';
 						passwordRef.focus();

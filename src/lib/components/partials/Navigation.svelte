@@ -53,12 +53,12 @@
 							<Loading height={50} width={50} color="text-white" fill="fill-pink-600"/>
 						</div>
 					{:else}
-						{#if $ordersStore.length === 0}
+						{#if ordersInDelivery.length === 0}
 							<div class="w-full flex flex-col justify-center items-center text-slate-500 text-center">
 								<Icon height={50} width={50}>
 									<Order/>
 								</Icon>
-								<p class="text-slate-800 font-bold text-lgl mt-3">Aucune commande pour le moment</p>
+								<p class="text-slate-800 font-bold text-lgl mt-3">Aucune commande en livraison pour le moment</p>
 							</div>
 						{:else if $ordersStore}
 							<div class="mb-3">
@@ -66,7 +66,7 @@
 							</div>
 							<div class="flex flex-col gap-2">
 								{#each ordersInDelivery as order}
-									<a href="/orders/track?order={order.uid}" class="bg-white group shadow-md hover:shadow-lg transition-all duration-200 w-full px-3 py-3 rounded-lg">
+									<a data-sveltekit-preload-data="tap" href="/orders" class="bg-white group shadow-md hover:shadow-lg transition-all duration-200 w-full px-3 py-3 rounded-lg">
 										<span class="text-sm font-medium group-hover:text-pink-600 transition-colors duration-200">Commande n° { order.uid.substring(10).toUpperCase() }</span>
 										<p class="text-xs text-slate-500 font-medium">{ dateFormat(order.created) }</p>
 									</a>

@@ -4,6 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { fly } from 'svelte/transition';
 	import { setProfile } from '$lib/firebase/client';
+	import { Loading } from '$lib';
 
 	const { userStore } = useUsersStore();
 
@@ -108,8 +109,15 @@
 							<Hamburger/>
 						</Icon>
 					</span>
-				</span>
-				vous pouvez voir un aperçu de vos 5 dernières commandes en cours de livraison.
+				</span><br/>
+				vous pouvez voir un aperçu de vos 5 dernières commandes en cours de livraison.<br/>
+				<span class="inline-flex items-center mb-2 mt-3">
+					L'indicateur
+					<span class="mx-2 h-10 w-10 bg-pink-600 rounded-full text-white flex justify-center items-center">
+						<Loading height={24} width={24}/>
+					</span>
+				</span><br/>
+				s'affiche lorsque des données ou une page sont en chargement.
 			</p>
 			<div class="flex justify-between items-center mt-3 px-1 py-2">
 				<button on:click={handlePrev} class="bg-slate-500 text-white hover:bg-slate-600 text-sm font-semibold transition-colors duration-300 px-3 py-1 rounded-lg">Précédent</button>

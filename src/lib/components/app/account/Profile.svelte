@@ -79,13 +79,14 @@
 	const handleSubmit = async () => {
 		toast.clear();
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
-
 		const profile = {
 			firstname: $usersStore.firstname,
 			lastname: $usersStore.lastname,
 			email: $usersStore.email,
 			phone: $usersStore.phone
 		} as Partial<UsersType>
+
+		let response = false;
 
 		if (profile.firstname != $initialValues.firstname) {
 			if (profile.firstname.trim() === '') {
@@ -95,6 +96,7 @@
 			}
 
 			await setProfile({ uid: $usersStore.uid, firstname: profile.firstname });
+			response = true;
 		}
 
 		if (profile.lastname != $initialValues.lastname) {
@@ -105,6 +107,7 @@
 			}
 
 			await setProfile({ uid: $usersStore.uid, lastname: profile.lastname });
+			response = true;
 		}
 
 		if (profile.email != $initialValues.email) {
@@ -121,11 +124,13 @@
 
 			await updateEmail(auth.currentUser, profile.email).then(async () => {
 				await setProfile({ uid: $usersStore.uid, email: profile.email });
+				response = true;
 			}).catch(async (err) => {
 				if (err.code === 'auth/requires-recent-login') {
 					toast.trigger({ ...toastError, message: 'Vous devez avoir une connexion récente pour pouvoir modifier votre adresse e-mail.\nDéconnectez-vous, reconnectez-vous et rééssayez.', timeout: 7000, hideDismiss: true })
 					usersStore.set({ ...$usersStore, email: $initialValues.email });
 				}
+				return false;
 			});
 		}
 
@@ -142,16 +147,19 @@
 			}
 
 			await setProfile({ uid: $usersStore.uid, phone: profile.phone });
+			response = true;
 		}
 
-		initialValues.set($usersStore);
+		if (response) {
+			initialValues.set($usersStore);
 
-		isFieldEmpty = false;
-		isSameAsInitial = true;
+			isFieldEmpty = false;
+			isSameAsInitial = true;
 
-		resetField();
-		await invalidate('/account');
-		toast.trigger({ ...toastSuccess, message: 'Votre profil a bien été modifié', hideDismiss: true });
+			resetField();
+			await invalidate('/account');
+			toast.trigger({ ...toastSuccess, message: 'Votre profil a bien été modifié', hideDismiss: true });
+		}
 	}
 </script>
 

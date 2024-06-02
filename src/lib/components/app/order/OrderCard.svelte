@@ -43,7 +43,7 @@
 							await cancelOrder($userStore.uid, data.uid);
 							await invalidate('/orders');
 							modalStore.clear();
-							toastStore.trigger({ ...toastSuccess, message: 'Votre commande a bien été annulé', timeout: 5000, hideDismiss: true });
+							toastStore.trigger({ ...toastSuccess, message: `Votre commande a bien été annulé`, timeout: 5000, hideDismiss: true });
 						}, 1000);
 					} else {
 						modalStore.clear();

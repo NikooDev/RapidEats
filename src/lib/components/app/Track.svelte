@@ -112,7 +112,7 @@
 				status: StatusEnum.AVAILABLE
 			}, $userStore.uid, { deliveryman: { status: StatusEnum.AVAILABLE }}, 'orders', order.uid);
 			await setOrder($userStore.uid, order.uid, { ...order, deliveryman: { ...$deliverymanStore, latitude: $userStore.latitude, longitude: $userStore.longitude }, status: OrderEnum.DELIVERED }).then(() => {
-				toastStore.trigger({ ...toastSuccess, message: 'Votre commande a bien été livrée.\nRetrouvez-là dans :\nGérer le compte > Historique des commandes.', timeout: 7000, hideDismiss: true });
+				toastStore.trigger({ ...toastSuccess, message: `Votre commande n° ${order.uid.substring(10).toUpperCase()} a bien été livrée.\nRetrouvez-là dans :\nGérer le compte > Historique des commandes.`, timeout: 7000, hideDismiss: true });
 			});
 		}
 	}
