@@ -154,8 +154,10 @@
 		});
 
 		const bounds = new LngLatBounds();
+		const padding = Math.max(20, 100 - (coords.length - 2) * 10);
+
 		coords.forEach(point => bounds.extend([point.lng, point.lat]));
-		map.fitBounds(bounds, { padding: coords.length === 2 ? 150 : 100 });
+		map.fitBounds(bounds, { padding });
 
 		map.on('load', async () => {
 			const route = await track();

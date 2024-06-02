@@ -16,22 +16,23 @@
 	let mapContainer: HTMLElement;
 
 	onMount(async () => {
-		const initialState = {lng: -2.758239, lat: 47.657487, zoom: 13};
-		const coords: [number, number] = [parseFloat($restaurantStore.longitude), parseFloat($restaurantStore.latitude)];
+		if ($restaurantStore) {
+			const coords: [number, number] = [parseFloat($restaurantStore.longitude), parseFloat($restaurantStore.latitude)];
 
-		map = new Map({
-			container: mapContainer,
-			style: MapStyle.STREETS.DEFAULT,
-			center: [initialState.lng, initialState.lat],
-			zoom: initialState.zoom,
-			geolocateControl: false,
-			navigationControl: false,
-			interactive: false
-		});
+			map = new Map({
+				container: mapContainer,
+				style: MapStyle.STREETS.DEFAULT,
+				center: [0, 0],
+				zoom: 14,
+				geolocateControl: false,
+				navigationControl: false,
+				interactive: false
+			});
 
-		map.setCenter(coords)
+			map.setCenter(coords)
 
-		new Marker({ color: '#db2777' }).setLngLat(coords).addTo(map);
+			new Marker({ color: '#db2777' }).setLngLat(coords).addTo(map);
+		}
 	});
 
 	const handleAnchor = (event: Event) => {

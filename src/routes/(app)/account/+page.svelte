@@ -35,7 +35,7 @@
 			</div>
 		</Masonry>
 	</div>
-	<div>
+	<div class="mb-10">
 		<Masonry idKey="uid" class="w-full" items={historic} minColWidth={900} maxColWidth={dashboardRef && dashboardRef} gap={20} animate={false} let:item>
 			<div class="flex w-full bg-white shadow-md rounded-2xl px-4 py-3">
 				<svelte:component this={item.component} users={$userStore}/>

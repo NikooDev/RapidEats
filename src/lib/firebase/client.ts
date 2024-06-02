@@ -204,8 +204,6 @@ export const setOrder = async (userUID: string, orderRef: string, { ...order }: 
 		const orderDocRef = doc(db, 'users', userUID, 'orders', orderRef);
 
 		await setDoc(orderDocRef, order, { merge: true });
-
-		console.log('Document successfully updated!');
 	} catch (error) {
 		console.error('Erreur lors de la mise à jour du document:', error);
 	}
