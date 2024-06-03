@@ -3,18 +3,14 @@
 	import { useUsersStore } from '$lib/stores/user';
 	import { cartStore, totalCart } from '$lib/stores/order';
 	import { Cart, Icon } from '$lib/icons';
-	import {
-		type CartMenuType,
-		type OrderGrouped,
-		type OrderType,
-		OrderEnum
-	} from '$lib/interfaces/order';
+	import { type CartMenuType, OrderEnum, type OrderGrouped, type OrderType } from '$lib/interfaces/order';
 	import type { DrawerStore, ModalStore, ToastStore } from '@skeletonlabs/skeleton';
 	import { modalLogin } from '$lib/config/modal';
-	import { getPositionRestaurant, addOrders } from '$lib/firebase/client';
+	import { addOrders, getOrder, getPositionRestaurant } from '$lib/firebase/client';
 	import { goto } from '$app/navigation';
 	import { Loading } from '$lib';
-	import { toastSuccess } from '$lib/config/toast';
+	import { toastError, toastSuccess } from '$lib/config/toast';
+	import { onMount } from 'svelte';
 
 	const authStore = useAuthStore();
 	const { userStore } = useUsersStore();
@@ -39,6 +35,10 @@
 		}, 0);
 		return { restaurantTitle: restaurant.restaurantTitle, totalPrice };
 	});
+
+	onMount(async () => {
+
+	})
 
 	const addMenu = (uid: string) => {
 		cartStore.update(cart => {
@@ -74,6 +74,19 @@
 			}
 
 			loading = true;
+			toast.clear();
+
+			const ordersLength = (await Promise.all($userStore.orders.map(async refOrder => {
+				return await getOrder($userStore.uid, refOrder, true);
+			}))).filter(item => item !== null).length;
+
+			if (ordersLength >= 5) {
+				toast.trigger({ ...toastError, message: 'Vous avez atteint la limite de commande en livraison.\n\nVeuillez finaliser vos commandes dans\nMes commandes > Suivre la livraison', timeout: 7000, hideDismiss: true })
+				loading = false;
+				return;
+			}
+
+
 
 			const restaurantOrders = await Promise.all(Object.values(groupedCart).map(async (restaurantData) => {
 				const { latitude, longitude } = await getPositionRestaurant(restaurantData.restaurantUID);

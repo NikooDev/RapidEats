@@ -34,8 +34,9 @@
 					<thead class="!border-0">
 						<tr class="bg-slate-800">
 							<th class="!font-semibold text-white">Nom</th>
+							<th class="!font-semibold text-white">Email</th>
 							<th class="!font-semibold text-white">Rôle</th>
-							<th class="!font-semibold text-white">Commandes en cours et terminées</th>
+							<th class="!font-semibold text-white !whitespace-nowrap text-ellipsis overflow-hidden">Commandes en cours et terminées</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -43,6 +44,9 @@
 							<tr class="!border-0 shadow-md {index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} !text-slate-800 hover:!bg-pink-600 hover:!text-white duration-200 transition-colors">
 								<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
 									{ customer.firstname.toCapitalize() } { customer.lastname.toCapitalize() }
+								</td>
+								<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
+									{ customer.email }
 								</td>
 								<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
 									{ customer.admin ? 'Admin' : 'Client' }
@@ -92,8 +96,9 @@
 					<thead class="!border-0">
 					<tr class="bg-slate-800">
 						<th class="!font-semibold text-white">Nom</th>
+						<th class="!font-semibold text-white">Email</th>
 						<th class="!font-semibold text-white">Rôle</th>
-						<th class="!font-semibold text-white">Commandes livrées</th>
+						<th class="!font-semibold text-white !whitespace-nowrap text-ellipsis overflow-hidden">Commandes livrées</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -101,6 +106,9 @@
 						<tr class="!border-0 shadow-md {index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} !text-slate-800 hover:!bg-pink-600 hover:!text-white duration-200 transition-colors">
 							<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
 								{ deliveryman.firstname.toCapitalize() }
+							</td>
+							<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
+								{ deliveryman.email }
 							</td>
 							<td class="!px-5 !text-base !font-medium !whitespace-nowrap text-ellipsis overflow-hidden">
 								Livreur

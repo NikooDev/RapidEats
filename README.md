@@ -12,6 +12,8 @@ https://rapid-eats.vercel.app/
 - Authentification (signup, login)
 - Gestion de profil
 - Historique de commandes
+- Annulation de commandes
+- Commandes avec plusieurs restaurants
 - Formulaire de recherche (restaurants et menus)
 - Affichage des restaurants sur une Map
 - Tracking de livreur sur une Map avec l'API Graphhopper
