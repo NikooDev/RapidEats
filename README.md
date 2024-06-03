@@ -9,7 +9,7 @@ https://rapid-eats.vercel.app/
 
 ## Fonctionnalités
 
-- Authentification
+- Authentification (signup, login)
 - Gestion de profil
 - Historique de commandes
 - Formulaire de recherche (restaurants et menus)
