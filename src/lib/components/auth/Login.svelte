@@ -52,6 +52,9 @@
 					case 'auth/user-not-found':
 						errorMessage = 'Vos identifiants sont incorrects';
 						break;
+					case 'auth/wrong-password':
+						errorMessage = 'Votre mot de passe est incorrect';
+						break;
 					case 'auth/missing-password':
 						errorMessage = 'Votre mot de passe est incorrect';
 						passwordRef.focus();
