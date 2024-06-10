@@ -1,0 +1,12 @@
+{
+	"name": "Rapid Eats",
+	"display": "standalone",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "favicon.png",
+			"type": "image/png",
+			"sizes": "128x128"
+		}
+	]
+}
