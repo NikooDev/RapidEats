@@ -13,10 +13,12 @@ https://rapid-eats.vercel.app/
 - Gestion de profil
 - Historique de commandes
 - Annulation de commandes
-- Commandes avec plusieurs restaurants
+- Possibilité de choisir des produits dans plusieurs restaurants avant de passer une commande
+- Tracker qui s'adapte selon le nombre de restaurants à livrer et le temps de route
 - Formulaire de recherche (restaurants et menus)
 - Affichage des restaurants sur une Map
-- Tracking de livreur sur une Map avec l'API Graphhopper
+- Tracking du livreur sur une Map avec l'API Graphhopper
+- Gestion autonome des status des livreurs
 
 
 ## Tech Stack
